@@ -35,9 +35,10 @@ function mostrarPopup() {
   document.getElementById("popupAviso").classList.add("show");
 }
 
-// Função para fechar popup de aviso
+// Função para fechar popup de aviso e voltar para a tela de login
 function fecharPopup() {
   document.getElementById("popupAviso").classList.remove("show");
+  window.location.href = "login.html";  // Redireciona para a página de login para inserir os dados novamente
 }
 
 // Função para abrir popup de erro
@@ -56,7 +57,6 @@ function mostrarPopupSucesso() {
 }
 
 // ✅ Função para fechar popup de sucesso e redirecionar
-// Função para fechar o popup de sucesso
 function fecharPopup() {
   document.getElementById("popupSucesso").style.display = "none";
   window.location.href = "http://127.0.0.1:5500/tcc-facul-main/tcc-facul-main/tela-cadastro/cadastro.html";
