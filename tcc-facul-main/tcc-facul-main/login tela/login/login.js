@@ -38,7 +38,7 @@ function mostrarPopup() {
 // Função para fechar popup de aviso e voltar para a tela de login
 function fecharPopup() {
   document.getElementById("popupAviso").classList.remove("show");
-  window.location.href = "login.html";  // Redireciona para a página de login para inserir os dados novamente
+  window.location.href = "../criar conta/criarconta.html";  // Redireciona para a página de login para inserir os dados novamente
 }
 
 // Função para abrir popup de erro
