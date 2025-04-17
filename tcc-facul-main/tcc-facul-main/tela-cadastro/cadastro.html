@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Estoque</title>
     <link rel="stylesheet" href="cadastro.css">
-    <script src="cadastro.js" defer></script>
 </head>
 <body>
     <div class="sidebar">
@@ -51,11 +50,13 @@
                 <img id="previewImagem" src="img/fallback.png" alt="Adicione uma Imagem" style="width:100%; max-width:200px; border-radius:8px; margin-bottom:10px;">
                 <p id="prevDescricao">Descrição: <span></span></p>
               </div>
-              
-        </div>
-        <section class="available-cars">
-            <h2>Carros Disponíveis</h2>
-        </section>
-    </div>
+    
+              <div class="popup" id="popupSucesso">
+                <div class="popup-content">
+                    <h2>✅ Veículo cadastrado com sucesso!</h2>
+                    <button id="btnFecharPopup">OK</button>
+                </div>
+            </div>   
+            <script src="cadastro.js" defer></script>
 </body>
 </html>
