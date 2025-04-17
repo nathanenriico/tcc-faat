@@ -145,15 +145,27 @@ document.getElementById("imagemCarro").addEventListener("change", function () {
         const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
         carrosSalvos.push(veiculo);
         localStorage.setItem("carrosDisponiveis", JSON.stringify(carrosSalvos));
+       
 
         console.log("Veículo salvo:", veiculo);
 
-        alert("Veículo cadastrado com sucesso!");
+        mostrarPopupSucesso();  // 👈 chama o popup
         exibirVeiculos();
         exibirEstoque();
         limparVisualizacao();
     }
 
+    function mostrarPopupSucesso() {
+      document.getElementById("popupSucesso").style.display = "flex";
+    
+      // Adiciona o event listener toda vez que o popup abrir (garante que o botão exista)
+      document.getElementById("btnFecharPopup").onclick = fecharPopupSucesso;
+    }
+    
+    function fecharPopupSucesso() {
+      document.getElementById("popupSucesso").style.display = "none";
+    }
+    
     // Atualizar visualização em tempo real
 document.getElementById("fabricante").addEventListener("input", () => {
     document.querySelector("#prevFabricante span").textContent = document.getElementById("fabricante").value;
