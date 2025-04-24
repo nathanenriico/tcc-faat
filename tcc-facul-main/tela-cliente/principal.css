@@ -124,32 +124,84 @@ body {
     filter: brightness(0) invert(1);
   }
   
-  
-  /* Carros Disponíveis */
-  .available-cars {
-    padding: 60px 20px;
-    background-color: #0d0d0d;
-    color: white;
-    text-align: center;
-  }
-  
-  .available-cars h2 {
-    margin-bottom: 30px;
-    font-size: 32px;
-  }
-  
-  .car-carousel {
-    display: flex;
-    overflow-x: auto;
-    gap: 20px;
-    padding: 20px 0;
-  }
-  
-  .carousel-container {
-    display: flex;
-    gap: 20px;
-  }
-  
+/* Cards organizados em fileiras */
+.stock-list {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebra de linha */
+  justify-content: center; /* Centraliza os cards horizontalmente */
+  gap: 20px; /* Espaçamento entre os cards */
+  padding: 20px;
+  width: 100%;
+}
+
+.stock-list h2 {
+  width: 100%; /* Garante que o título fique acima dos cards */
+  text-align: center;
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.stock-card {
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  width: 300px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stock-card:hover {
+  transform: translateY(-5px);
+}
+
+.car-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 250px;
+  min-width: 250px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.car-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.car-details {
+  margin-top: 10px;
+}
+
+.car-details h3 {
+  margin: 10px 0 5px;
+}
+
+.car-details p {
+  margin: 2px 0;
+}
+
+.whatsapp-btn {
+  background-color: #25d366; /* Cor do WhatsApp */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  background-color: #1ebe57; /* Cor mais escura no hover */
+}
+
   /* Rodapé */
   footer {
     background-color: #000;
