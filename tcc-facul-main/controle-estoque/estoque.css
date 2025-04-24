@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -12,42 +13,7 @@ header {
     padding: 20px;
 }
 
-.stock-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-    justify-content: center;
-}
-
-.stock-card {
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 10px;
-    width: 300px;
-    text-align: center;
-}
-.car-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-.delete-btn {
-    background: #e63946;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 14px;
-    transition: background 0.3s ease;
-}
-
-.delete-btn:hover {
-    background: #c0293a;
-}
+/* Botões e Layout */
 .voltar-container {
     display: flex;
     justify-content: flex-start;
@@ -66,9 +32,76 @@ header {
     display: flex;
     align-items: center;
     gap: 8px;
-    text-decoration: none;
 }
 
 .btn-voltar:hover {
     background-color: #4a3ebf;
+}
+
+/* Estoque de Veículos */
+.stock-list {
+    display: flex; /* Layout flexível horizontal */
+    flex-wrap: wrap; /* Permite quebra de linha para responsividade */
+    gap: 20px; /* Espaçamento entre os cartões */
+    padding: 20px;
+    justify-content: center; /* Centraliza os cards */
+}
+
+.stock-card {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    width: 300px; /* Largura fixa do card */
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stock-card:hover {
+    transform: translateY(-5px); /* Adiciona um efeito suave no hover */
+}
+
+.car-image img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.delete-btn,
+.add-btn {
+    width: 100%;
+    margin-top: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-btn {
+    background: #e63946;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #c0293a;
+}
+
+.add-btn {
+    background: #4caf50;
+    color: white;
+}
+
+.add-btn:hover {
+    background: #3e8e41;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .stock-card {
+        width: 100%; /* Adapta largura para telas menores */
+    }
 }
