@@ -16,8 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             stockCard.innerHTML = `
                 <div class="car-image">
-                    <img src="${carro.imagem}" alt="${carro.modelo}" 
-                    style="width: 100%; height: auto; border-radius: 8px;">
+                    <img src="${carro.imagem}" alt="${carro.modelo}">
                 </div>
                 <h3>${carro.fabricante} ${carro.modelo}</h3>
                 <p><strong>Ano:</strong> ${carro.ano}</p>
@@ -26,32 +25,56 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Dono(s):</strong> ${carro.quantidadeDono}</p>
                 <p><strong>Descrição:</strong> ${carro.descricao}</p>
                 <button class="delete-btn" data-index="${index}">🗑️ Excluir</button>
+                <button class="add-btn" data-index="${index}">➕ Adicionar</button>
             `;
 
             stockSection.appendChild(stockCard);
         });
-
-        adicionarEventosExcluir();
     }
 
-    function adicionarEventosExcluir() {
-        const botoesExcluir = document.querySelectorAll(".delete-btn");
-        botoesExcluir.forEach(botao => {
-            botao.addEventListener("click", function () {
-                const index = this.getAttribute("data-index");
-                excluirCarro(index);
-            });
-        });
-    }
+    // Delegação de eventos para garantir que os eventos dos botões sejam mantidos
+    stockSection.addEventListener("click", function(event) {
+        const target = event.target;
+
+        // Verifica se é o botão de exclusão
+        if (target.classList.contains("delete-btn")) {
+            const index = target.getAttribute("data-index");
+            excluirCarro(index);
+        }
+
+        // Verifica se é o botão de adicionar
+        if (target.classList.contains("add-btn")) {
+            const index = target.getAttribute("data-index");
+            adicionarCarro(index);
+        }
+    });
 
     function excluirCarro(index) {
-        let carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
-        carrosSalvos.splice(index, 1);
-        localStorage.setItem("carrosDisponiveis", JSON.stringify(carrosSalvos));
-        carregarEstoque();
+        let carrosDisponiveis = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
+        carrosDisponiveis.splice(index, 1); // Remove o carro do estoque
+        localStorage.setItem("carrosDisponiveis", JSON.stringify(carrosDisponiveis));
+        carregarEstoque(); // Atualiza o DOM
     }
 
-    carregarEstoque();
+    function adicionarCarro(index) {
+        const carrosDisponiveis = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
+        const carrosAdicionados = JSON.parse(localStorage.getItem("carrosAdicionados")) || [];
+
+        const carroSelecionado = carrosDisponiveis[index];
+
+        // Verificar se o carro já foi adicionado
+        const jaExiste = carrosAdicionados.some(carro => carro.modelo === carroSelecionado.modelo);
+
+        if (!jaExiste) {
+            carrosAdicionados.push(carroSelecionado);
+            localStorage.setItem("carrosAdicionados", JSON.stringify(carrosAdicionados));
+            alert("Carro adicionado com sucesso!");
+        } else {
+            alert("Este carro já foi adicionado.");
+        }
+    }
+
+    carregarEstoque(); // Carrega o estoque inicial
 });
 
 function voltarPagina() {
