@@ -1,170 +1,178 @@
 /* Reset e base */
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f5f5f5;
-    padding-top: 70px; /* Compensar a navbar fixa */
-  }
-  
-  /* Navbar */
-  .navbar {
-    display: flex;
-    align-items: center;
-    background-color: #000;
-    padding: 15px 50px;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 999;
-  }
-  
-  /* Centralizar os links */
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 40px;
-    margin: 0 auto;
-    padding: 0;
-  }
-  
-  .nav-links li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s;
-  }
-  
-  .nav-links li a:hover {
-    color: #ff6600;
-  }
-  
-  .logo img {
-    height: 40px;
-  }
-  
-  
-  /* Header */
-  .header {
-    background-image: url('experiencia-do-cliente-loja-de-carros-4 1.png');
-    background-size: cover;
-    background-position: center;
-    padding: 150px 20px 80px;
-    color: white;
-    position: relative;
-    text-align: center;
-  }
-  
-  .header .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-  }
-  
-  .header-content {
-    position: relative;
-    z-index: 2;
-  }
-  
-  .header-content h1 {
-    font-size: 48px;
-    margin: 0 0 20px;
-  }
-  
-  .header-content p {
-    font-size: 20px;
-  }
-  
-  /* Categorias */
-  .categories {
-    text-align: center;
-    padding: 60px 20px;
-    background-color: #fff;
-  }
-  
-  .categories h2 {
-    margin-bottom: 40px;
-    font-size: 36px;
-    font-weight: 700;
-    color: #222;
-  }
-  
-  .category {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f8f8;
-    color: #333;
-    padding: 25px 35px;
-    margin: 15px;
-    border-radius: 20px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-  }
-  
-  .category img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 12px;
-  }
-  
-  .category:hover {
-    background-color: #ff6600;
-    color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  }
-  
-  .category:hover img {
-    filter: brightness(0) invert(1);
-  }
-  
-/* Cards organizados em fileiras */
-.stock-list {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+  padding-top: 70px; /* Compensar a navbar fixa */
+}
+
+/* Navbar */
+.navbar {
   display: flex;
-  flex-wrap: wrap; /* Permite quebra de linha */
-  justify-content: center; /* Centraliza os cards horizontalmente */
-  gap: 20px; /* Espaçamento entre os cards */
-  padding: 20px;
+  align-items: center;
+  background-color: #000;
+  padding: 15px 50px;
+  position: fixed;
+  top: 0;
   width: 100%;
+  z-index: 999;
+}
+
+/* Centralizar os links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.nav-links li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+  color: #ff6600;
+}
+
+.logo img {
+  height: 40px;
+}
+
+
+/* Header */
+.header {
+  background-image: url('experiencia-do-cliente-loja-de-carros-4 1.png');
+  background-size: cover;
+  background-position: center;
+  padding: 150px 20px 80px;
+  color: white;
+  position: relative;
+  text-align: center;
+}
+
+.header .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.header-content h1 {
+  font-size: 48px;
+  margin: 0 0 20px;
+}
+
+.header-content p {
+  font-size: 20px;
+}
+
+/* Seção de Categorias */
+.categories {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.categories h2 {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 24px; /* Tamanho ajustado para desktop */
+}
+
+.categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px; /* Espaçamento entre os itens */
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px; /* Largura fixa para desktops */
+}
+
+.category:hover {
+  transform: scale(1.05); /* Efeito de hover */
+}
+
+.category img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.category:hover {
+  transform: scale(1.05);
+}
+
+/* Cards organizados em fileiras */
+/* Responsividade geral para a seção de carros */
+.stock-list {
+  padding: 20px;
+  background-color: #fff;
+  text-align: center;
 }
 
 .stock-list h2 {
-  width: 100%; /* Garante que o título fique acima dos cards */
-  text-align: center;
-  margin: 0;
+  margin-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
   color: #333;
 }
 
+.carros-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centraliza os cards horizontalmente */
+  gap: 20px; /* Espaçamento entre os cards */
+}
+
 .stock-card {
+background-color: white;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+padding: 10px;
+width: 300px;
+text-align: center;
+transition: transform 0.3s ease;
+}
+
+.stock-card:hover {
+transform: translateY(-5px);
+}
+
+/* Estilo para os cards dos carros */
+.car-card {
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 10px;
-  width: 300px;
+  width: 300px; /* Largura padrão para telas maiores */
   text-align: center;
   transition: transform 0.3s ease;
 }
-
-.stock-card:hover {
-  transform: translateY(-5px);
-}
-
-.car-card {
-  background: white;
-  border-radius: 10px;
-  padding: 15px;
-  width: 250px;
-  min-width: 250px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
+.car-card:hover {
+  transform: translateY(-5px); /* Efeito de hover */
 }
 
 .car-image img {
@@ -175,16 +183,64 @@ body {
 }
 
 .car-details {
-  margin-top: 10px;
+margin-top: 10px;
 }
 
 .car-details h3 {
   margin: 10px 0 5px;
+  font-size: 18px;
+  color: #444;
 }
 
 .car-details p {
   margin: 2px 0;
+  font-size: 14px;
+  color: #666;
 }
+
+.categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center; /* Centraliza os elementos */
+  padding: 10px;
+}
+
+.category {
+  text-align: center;
+  width: 120px; /* Largura fixa para consistência */
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category-image {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center; /* Alinha horizontalmente */
+  align-items: center; /* Alinha verticalmente */
+  overflow: hidden;
+  border-radius: 50%; /* Opcional: bordas arredondadas */
+  background-color: #e0e0e0; /* Para um fundo neutro */
+}
+
+.category-image img {
+  width: auto;
+  height: 100%;
+  max-height: 100%; /* Limita o tamanho para o contêiner */
+  object-fit: contain; /* Garante a proporção sem cortes */
+  display: block;
+}
+
+.category-image img {
+  max-width: 100%; /* Limita a largura ao contêiner */
+  max-height: 100%; /* Limita a altura ao contêiner */
+  object-fit: contain; /* Mantém proporções sem cortar */
+  display: block;
+}
+
 
 .whatsapp-btn {
   background-color: #25d366; /* Cor do WhatsApp */
@@ -201,56 +257,118 @@ body {
 .whatsapp-btn:hover {
   background-color: #1ebe57; /* Cor mais escura no hover */
 }
+/* Rodapé */
+footer {
+  background-color: #000;
+  color: #fff;
+  padding: 50px 20px 20px;
+}
 
-  /* Rodapé */
-  footer {
-    background-color: #000;
-    color: #fff;
-    padding: 50px 20px 20px;
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 220px;
+}
+
+.footer-section h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.footer-section p, .footer-section ul, .footer-section a {
+  font-size: 16px;
+  color: #ccc;
+  text-decoration: none;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-section ul li a:hover {
+  color: #ff6600;
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 14px;
+  color: #aaa;
+  padding-top: 10px;
+  border-top: 1px solid #333;
+}
+
+/* Responsividade específica para telas menores */
+@media (max-width: 768px) {
+  .car-card {
+      width: 90%; /* Adapta a largura para ocupar mais espaço em telas pequenas */
   }
-  
-  .footer-content {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 40px;
-    margin-bottom: 20px;
+
+  .carros-container {
+      gap: 15px; /* Reduz o espaçamento entre os cards */
   }
-  
-  .footer-section {
-    flex: 1;
-    min-width: 220px;
+
+  .stock-list h2 {
+      font-size: 20px; /* Ajusta o tamanho da fonte para títulos em telas menores */
   }
-  
-  .footer-section h2 {
-    margin-bottom: 15px;
-    font-size: 20px;
+  .categories h2 {
+    font-size: 20px; /* Ajusta o tamanho do texto */
+}
+
+.category {
+    width: 150px; /* Reduz a largura dos itens */
+    padding: 10px; /* Ajusta o espaçamento interno */
+}
+
+.category img {
+    width: 40px; /* Imagens menores para telas pequenas */
+    height: 40px;
+}
+
+.categories-container {
+    gap: 10px; /* Reduz o espaçamento entre os itens */
+}
+
+}
+
+@media (max-width: 480px) {
+  .car-card {
+      width: 100%; /* Cards ocupam toda a largura disponível */
   }
-  
-  .footer-section p, .footer-section ul, .footer-section a {
-    font-size: 16px;
-    color: #ccc;
-    text-decoration: none;
+
+  .stock-list h2 {
+      font-size: 18px; /* Ajusta ainda mais o tamanho da fonte */
   }
-  
-  .footer-section ul {
-    list-style: none;
-    padding: 0;
+
+  .car-details p {
+      font-size: 12px; /* Texto menor para telas pequenas */
   }
-  
-  .footer-section ul li {
-    margin-bottom: 10px;
-  }
-  
-  .footer-section ul li a:hover {
-    color: #ff6600;
-  }
-  
-  .footer-bottom {
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-    padding-top: 10px;
-    border-top: 1px solid #333;
-  }
-  
+  .categories h2 {
+    font-size: 18px; /* Título ajustado para celulares */
+}
+
+.category {
+    width: 100%; /* Os itens ocupam toda a largura da tela */
+    padding: 8px; /* Espaçamento mais compacto */
+}
+
+.category img {
+    width: 35px; /* Tamanho ainda menor para imagens */
+    height: 35px;
+}
+
+.categories-container {
+    gap: 5px; /* Reduz ainda mais o espaçamento entre os itens */
+}
+}
