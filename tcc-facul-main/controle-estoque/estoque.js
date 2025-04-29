@@ -155,5 +155,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function voltarPagina() {
-    window.location.href = "../tela-cadastro/cadastro.html";
+    window.location.href = "../tela-cadastro/cadastro/cadastro.html";
 }
