@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Financeira</title>
+    <link rel="stylesheet" href="vendas.css">
+    <script src="vendas.js"></script>
+    
+</head>
+<body>
+    <header class="navbar">
+        <h1>Gestão Financeira</h1>
+    </header>
+
+    <main class="dashboard">
+        <section class="summary">
+            <h2>Resumo Financeiro</h2>
+            <p>Total vendido: <span id="totalVendas">R$ 0,00</span></p>
+        </section>
+
+        <section class="filters">
+            <label for="startDate">Data Início:</label>
+            <input type="date" id="startDate">
+            <label for="endDate">Data Fim:</label>
+            <input type="date" id="endDate">
+            <button id="filterBtn">Filtrar</button>
+        </section>
+        
+        <section class="charts">
+            <div class="chart-container">
+                <h3>Gráfico de Barras</h3>
+                <canvas id="barChart"></canvas> <!-- Adicione aqui para o Gráfico de Barras -->
+            </div>
+            <div class="chart-container">
+                <h3>Gráfico de Linha</h3>
+                <canvas id="lineChart"></canvas> <!-- Adicione aqui para o Gráfico de Linha -->
+            </div>
+        </section>
+        
+        <button class="register-sale-btn" id="registerSaleBtn">Registrar Venda</button>
+        <button class="view-sales-btn" id="viewSalesBtn">Visualização de Vendas</button>
+        <button class="delete-sale-btn" id="deleteSaleBtn">Excluir Venda</button>
+        
+<!-- Modal de Exclusão -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-delete-btn" id="closeDeleteBtn">&times;</span> <!-- Ícone "X" -->
+        <h3>Excluir Venda</h3>
+        <div id="deleteSalesContent">
+            <!-- As vendas registradas serão exibidas aqui -->
+        </div>
+        <!-- Botão Voltar -->
+        <button class="back-btn" id="backBtn">Voltar</button>
+    </div>
+</div>
+        <!-- Modal de Registro -->
+        <div id="saleModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Registrar Venda</h3>
+                <form id="saleForm">
+                    <label for="carModel">Modelo do Carro:</label>
+                    <input type="text" id="carModel" required>
+                    <label for="carValue">Valor do Carro:</label>
+                    <input type="number" id="carValue" required>
+                    <button type="submit">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2023 - Gestão Financeira</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="ViewVendas.js"></script>
+</body>
+</html>
