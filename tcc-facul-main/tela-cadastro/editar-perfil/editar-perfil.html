@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <link rel="stylesheet" href="editar-perfil.css">
+</head>
+<body>
+    <header class="navbar">
+        <h1>Perfil</h1>
+    </header>
+    
+    <main class="profile-area">
+        <h2>Meu Perfil</h2>
+        <form id="profileForm">
+            <div class="profile-picture">
+                <img src="profile-placeholder.png" alt="Foto de Perfil" class="profile-image">
+            </div>
+    
+            <div class="profile-fields">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" class="input-field" value="">
+                
+                <label for="password">Senha:</label>
+                <div class="password-container">
+                    <input type="password" id="password" class="input-field" value="">
+                    <button type="button" id="togglePassword" class="toggle-password">🔒</button>
+                </div>
+                
+                <button type="submit" id="saveProfileBtn" class="btn-save">Salvar Perfil</button>
+            </div>            
+        </form>
+    </main>    
+
+    <div class="popup" id="popupSuccess">
+        <h3>Perfil atualizado com sucesso!</h3>
+        <button onclick="fecharPopup()">OK</button>
+      </div>           
+
+    <footer class="footer">
+        <p>&copy; 2023 - Sistema de Gestão</p>
+    </footer>
+    <script src="editar-perfil.js"></script>
+</body>
+</html>
