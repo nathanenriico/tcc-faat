@@ -1,3 +1,55 @@
+// Aguarda o carregamento completo do DOM
+document.addEventListener("DOMContentLoaded", function() {
+  // Evento de clique no texto "Esqueceu ou Alterar Senha?"
+  const alterarSenhaLink = document.getElementById("alterarSenhaLink");
+  if (alterarSenhaLink) {
+    alterarSenhaLink.onclick = function() {
+      mostrarPopupAlterarSenha();
+    };
+  }
+
+  // Evento para o botão criar conta
+  document.getElementById('criarConta').onclick = function() {
+    window.location.href = "../criar conta/criarconta.html";
+  };
+});
+
+
+  // Preenche os campos automaticamente se os dados estiverem salvos
+  const emailSalvo = localStorage.getItem("email");
+  const senhaSalva = localStorage.getItem("senha");
+  const lembrarSenha = localStorage.getItem("lembrarSenha");
+
+  if (lembrarSenha === "true") {
+    if (emailSalvo) {
+      document.getElementById("email").value = emailSalvo;
+    }
+    if (senhaSalva) {
+      document.getElementById("senha").value = senhaSalva;
+    }
+    document.getElementById("lembrar").checked = true; // Mantém o checkbox marcado
+  }
+
+  // Adiciona evento ao checkbox "Lembrar Senha"
+  const lembrarCheckbox = document.getElementById("lembrar");
+  lembrarCheckbox.addEventListener("change", function () {
+    if (lembrarCheckbox.checked) {
+      // Salva o email e senha no localStorage
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      localStorage.setItem("email", email);
+      localStorage.setItem("senha", senha);
+      localStorage.setItem("lembrarSenha", "true");
+    } else {
+      // Remove os dados salvos do localStorage
+      localStorage.removeItem("email");
+      localStorage.removeItem("senha");
+      localStorage.setItem("lembrarSenha", "false");
+    }
+  });
+
+// Função para o envio do formulário de login
 document.getElementById('loginForm').onsubmit = function(event) {
   event.preventDefault();
 
@@ -8,15 +60,56 @@ document.getElementById('loginForm').onsubmit = function(event) {
   let senhaSalva = localStorage.getItem("senha");
 
   if (!emailSalvo || !senhaSalva) {
-    mostrarPopup();  // Se não existir conta salva
+    mostrarPopup(); // Popup para informar que não há conta cadastrada
   } else if (email === emailSalvo && senha === senhaSalva) {
-    mostrarPopupSucesso();  // ✅ Agora mostra o popup de sucesso
+    mostrarPopupSucesso(); // Popup de sucesso
   } else {
-    mostrarPopupErro(); // Se errado, mostra o popup de erro
+    mostrarPopupErro(); // Popup de erro
   }
 };
 
-// Ocultar Senha
+// Função para abrir o popup de alteração de senha
+function mostrarPopupAlterarSenha() {
+  const popupAlterarSenha = document.createElement("div");
+  popupAlterarSenha.className = "popup";
+  popupAlterarSenha.id = "popupAlterarSenha";
+
+  popupAlterarSenha.innerHTML = `
+      <h3>Alterar Senha</h3>
+      <p>Insira seu email para receber um link de alteração de senha:</p>
+      <input type="email" placeholder="Seu email" id="emailAlteracao" required>
+      <button onclick="enviarAlteracaoSenha()">Enviar</button>
+      <button onclick="fecharPopupAlterarSenha()">Cancelar</button>
+  `;
+
+  document.body.appendChild(popupAlterarSenha);
+
+  // Exibe o popup com animação
+  popupAlterarSenha.classList.add("show");
+}
+
+// Função para fechar o popup de alteração de senha
+function fecharPopupAlterarSenha() {
+  const popup = document.getElementById("popupAlterarSenha");
+  if (popup) {
+    document.body.removeChild(popup);
+  }
+}
+
+// Função para enviar alteração de senha
+function enviarAlteracaoSenha() {
+  const emailAlteracao = document.getElementById("emailAlteracao").value;
+  const emailSalvo = localStorage.getItem("email");
+
+  if (emailAlteracao === emailSalvo) {
+    alert("Um email foi enviado com instruções para alterar sua senha.");
+    fecharPopupAlterarSenha();
+  } else {
+    alert("Email não cadastrado. Tente novamente.");
+  }
+}
+
+// Função para alternar a visualização da senha
 function togglePassword() {
   const senhaInput = document.getElementById("senha");
   const toggleIcon = document.querySelector(".toggle-password");
@@ -30,39 +123,48 @@ function togglePassword() {
   }
 }
 
-// Função para abrir popup de aviso (não tem conta)
+// Função para abrir o popup de aviso
 function mostrarPopup() {
-  document.getElementById("popupAviso").classList.add("show");
+  const popup = document.getElementById("popupAviso");
+  popup.classList.add("show");
+
+  // Aguarda 2 segundos antes de redirecionar
+  setTimeout(() => {
+    window.location.href = "/tcc-facul-main/tcc-facul-main/login-tela/login/login.html";
+  }, 2000); // 2000 ms = 2 segundos
 }
 
-// Função para fechar popup de aviso e voltar para a tela de login
+function fecharPopupAviso() {
+  // Fecha o popup ao remover a classe "show"
+  document.getElementById("popupAviso").classList.remove("show");
+
+  // Redireciona para a página de login
+  window.location.href = "/tcc-facul-main/tcc-facul-main/login-tela/login/login.html";
+}
+
+// Função para fechar o popup de aviso
 function fecharPopup() {
   document.getElementById("popupAviso").classList.remove("show");
-  window.location.href = "../criar conta/criarconta.html";  // Redireciona para a página de login para inserir os dados novamente
+  window.location.href = "../criar conta/criarconta.html"; // Redireciona para a página de criar conta
 }
 
-// Função para abrir popup de erro
+// Função para abrir o popup de erro
 function mostrarPopupErro() {
   document.getElementById("popupErro").classList.add("show");
 }
 
-// Função para fechar popup de erro
+// Função para fechar o popup de erro
 function fecharPopupErro() {
   document.getElementById("popupErro").classList.remove("show");
 }
 
-// ✅ Função para abrir popup de sucesso
+// Função para abrir o popup de sucesso
 function mostrarPopupSucesso() {
   document.getElementById("popupSucesso").classList.add("show");
 }
 
-// ✅ Função para fechar popup de sucesso e redirecionar
+// Função para fechar o popup de sucesso e redirecionar
 function fecharPopup() {
   document.getElementById("popupSucesso").style.display = "none";
-  window.location.href = "/tcc-facul-main/tcc-facul-main/tela-cadastro/cadastro.html";
+  window.location.href = "/tcc-facul-main/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
 }
-
-// Ir para a página de cadastro
-document.getElementById('criarConta').onclick = function() {
-  window.location.href = "../criar conta/criarconta.html";
-};
