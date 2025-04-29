@@ -1,0 +1,303 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo geral do corpo */
+body {
+    display: flex;
+    background-color: #f4f4f4;
+}
+
+/* Sidebar (se houver) */
+.sidebar {
+    width: 250px;
+    background: #fff;
+    padding: 20px;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Imagens na sidebar */
+.car-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Área de perfil */
+.profile-area {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Nome e informações do usuário */
+.profile-card h3 {
+    font-size: 20px;
+    color: #333;
+}
+
+.profile-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Botões gerais */
+.profile-card button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.profile-card button:hover {
+    background-color: #0056b3;
+}
+
+/* Botões da área de ação */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-buttons button {
+    width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-buttons button a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* Seção de edição de perfil */
+.edit-profile-section {
+    text-align: center;
+}
+
+.edit-profile-section input {
+    width: 80%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.edit-profile-section button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#saveProfileBtn {
+    background-color: #28a745;
+    color: white;
+}
+
+#saveProfileBtn:hover {
+    background-color: #218838;
+}
+
+#cancelEditBtn {
+    background-color: #dc3545;
+    color: white;
+}
+
+#cancelEditBtn:hover {
+    background-color: #c82333;
+}
+
+/* Layout do conteúdo principal */
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Títulos */
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Formulários e visualização */
+.form-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.form-box, .mobile-preview {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.form-box input, .form-box textarea, .form-box button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-box button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.form-box button:hover {
+    background-color: #0056b3;
+}
+
+.mobile-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile-preview h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.mobile-preview p {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    margin: 5px 0;
+}
+
+.mobile-preview img {
+    width: 60%;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+.carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.carousel img {
+    max-width: 120px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* POPUP DE SUCESSO */
+.popup {
+    display: none; /* Oculto por padrão */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro translúcido */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+#btnFecharPopup {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#btnFecharPopup:hover {
+    background-color: #218838;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .form-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-box, .mobile-preview {
+        max-width: 100%;
+    }
+
+    .action-buttons button {
+        width: 100%;
+    }
+}
+
+@keyframes popupShow {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendas Registradas</title>
+    <link rel="stylesheet" href="visualizarVendas.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="title-container">
+            <h1>Gestão de Vendas</h1>
+        </div>
+        <nav>
+            <a href="../gestao-financeira/vendas.html" class="back-btn">← Voltar</a>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+        <section class="sales-summary">
+            <h2>Resumo das Vendas</h2>
+            <p>Total de vendas no mês: <span id="totalVendasMes">R$ 0,00</span></p>
+            <p>Total acumulado dos anos: <span id="totalVendasAnos">R$ 0,00</span></p>
+        </section>
+
+        <section class="sales-details">
+            <h3>Vendas Detalhadas</h3>
+            <div id="salesContent">
+                <!-- O conteúdo será preenchido dinamicamente pelo JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2023 - Gestão Financeira</p>
+    </footer>
+
+    <script src="ViewVendas.js"></script>
+</body>
+</html>
