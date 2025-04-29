@@ -206,41 +206,22 @@ margin-top: 10px;
   padding: 10px;
 }
 
-.category {
-  text-align: center;
-  width: 120px; /* Largura fixa para consistência */
-  background-color: #f4f4f4;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .category-image {
-  width: 100px;
-  height: 100px;
+  width: 150px; /* Imagem maior */
+  height: 150px; /* Altura proporcional à largura */
   display: flex;
-  justify-content: center; /* Alinha horizontalmente */
-  align-items: center; /* Alinha verticalmente */
-  overflow: hidden;
-  border-radius: 50%; /* Opcional: bordas arredondadas */
-  background-color: #e0e0e0; /* Para um fundo neutro */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  overflow: hidden; /* Remove partes excedentes */
+  background-color: #e0e0e0; /* Fundo neutro para estética */
 }
 
 .category-image img {
-  width: auto;
-  height: 100%;
-  max-height: 100%; /* Limita o tamanho para o contêiner */
-  object-fit: contain; /* Garante a proporção sem cortes */
-  display: block;
+  width: 100%; /* Preenche o contêiner */
+  height: 100%; /* Preenche o contêiner */
+  object-fit: cover; /* Mantém proporção, corta excessos */
+  display: block; /* Remove espaços adicionais */
 }
-
-.category-image img {
-  max-width: 100%; /* Limita a largura ao contêiner */
-  max-height: 100%; /* Limita a altura ao contêiner */
-  object-fit: contain; /* Mantém proporções sem cortar */
-  display: block;
-}
-
 
 .whatsapp-btn {
   background-color: #25d366; /* Cor do WhatsApp */
