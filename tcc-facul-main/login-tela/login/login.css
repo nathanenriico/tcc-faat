@@ -109,6 +109,20 @@
     margin-right: 5px;
 }
 
+/* Esqueceu Senha */
+.clickable-text {
+    color: #5A4FCF;
+    margin-left: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 14px;
+  }
+  
+  .clickable-text:hover {
+    color: #4a3ebf;
+  }
+  
+
 /* Botão de login */
 .btn {
     width: 100%;
@@ -168,7 +182,6 @@
 .popup button:hover {
     background: #4a3ebf;
 }
-
 
 /* Responsividade */
 @media (max-width: 768px) {
