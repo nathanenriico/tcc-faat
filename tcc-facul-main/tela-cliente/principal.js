@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const imagemCategoria = carro.imagem || "default-category.png";
 
             categoria.innerHTML = `
-                <img src="${imagemCategoria}" alt="${modelo}" style="width: 50px; height: 50px;">
+                <img src="${imagemCategoria}" alt="${modelo}" style="width: 100%; height: 120px; object-fit: cover; justify-content: center;
+                align-items: center;">
                 <span>${modelo}</span>
             `;
 
