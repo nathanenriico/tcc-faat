@@ -252,34 +252,58 @@ h1 {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro translúcido */
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro translúcido */
+    display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(5px); /* Efeito de desfoque */
 }
 
 .popup-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    animation: popupShow 0.3s ease-in-out;
+    max-width: 350px;
+    width: 90%;
+}
+
+.popup-content h2 {
+    color: #28a745;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.popup-content p {
+    font-size: 16px;
+    color: #333;
 }
 
 #btnFecharPopup {
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 10px 20px;
     background-color: #28a745;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     color: white;
     font-weight: bold;
     cursor: pointer;
+    transition: background 0.3s ease;
 }
 
 #btnFecharPopup:hover {
     background-color: #218838;
 }
+
+/* Animação de exibição do popup */
+@keyframes popupShow {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {
