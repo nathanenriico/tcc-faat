@@ -298,6 +298,7 @@ h1 {
     background-color: #218838;
 }
 
+
 /* Animação de exibição do popup */
 @keyframes popupShow {
     from { transform: scale(0.8); opacity: 0; }
