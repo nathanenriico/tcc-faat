@@ -82,9 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("imagemCarro").addEventListener("change", atualizarVisualizacao);
 
     // Salva veículos no `localStorage`
-    function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem) {
+    function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens) {
         console.log("Salvando carro...");
-        const veiculo = { fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem };
+        const veiculo = { fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens };
         const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
         carrosSalvos.push(veiculo);
         localStorage.setItem("carrosDisponiveis", JSON.stringify(carrosSalvos));
@@ -139,29 +139,35 @@ document.addEventListener("DOMContentLoaded", function () {
         const km = document.getElementById("km").value.trim();
         const preco = document.getElementById("preco").value.trim();
         const descricao = document.getElementById("descricao").value.trim();
-        const imagemInput = document.getElementById("imagemCarro").files[0];
+        const imagemInput = document.getElementById("imagemCarro").files;  // Nota: Sem o [0], para pegar todos os arquivos
     
         if (!fabricante || !modelo || !ano || !quantidadeDono || !km || !preco || !descricao) {
             alert("Por favor, preencha todos os campos!");
             return;
         }
     
-        let imagem = "img/fallback.png"; // Define uma imagem padrão
-    
-        if (imagemInput) {
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                imagem = reader.result;
-                salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem);
-                mostrarPopupSucesso(); // Exibe o popup **após salvar**
-            };
-            reader.readAsDataURL(imagemInput);
+        // AQUI é onde você adiciona o código para tratar múltiplas imagens:
+        let imagens = [];
+        if (imagemInput.length > 0) {
+            let imagensProcessadas = 0;
+            Array.from(imagemInput).forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    imagens.push(reader.result);
+                    imagensProcessadas++;
+                    if (imagensProcessadas === imagemInput.length) {
+                        salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens);
+                        mostrarPopupSucesso();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         } else {
-            salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem);
-            mostrarPopupSucesso(); // Exibe o popup **após salvar**
+            imagens.push("img/fallback.png");
+            salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens);
+            mostrarPopupSucesso();
         }
     });
-    
 
     carregarEstoque(); // Inicializa estoque ao carregar a página
 });
