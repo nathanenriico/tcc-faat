@@ -4,28 +4,45 @@ document.addEventListener("DOMContentLoaded", function () {
     const popupSucesso = document.getElementById("popupSucesso");
     const btnFecharPopup = document.getElementById("btnFecharPopup");
 
+      // Exibe o popup de sucesso ao cadastrar um veículo
+      function mostrarPopupSucesso() {
+        console.log("Tentando exibir o popup de sucesso...");
+        if (popupSucesso) {
+            popupSucesso.style.display = "flex"; // Exibe o popup
+            console.log("Popup de sucesso exibido!");
+        } else {
+            console.error("Elemento popupSucesso não encontrado!");
+        }
+    }
+
+    // Evento para fechar o popup ao clicar no botão "Fechar"
+    btnFecharPopup.addEventListener("click", function () {
+        console.log("Fechando popup...");
+        popupSucesso.style.display = "none";
+    });
+
     // Atualiza visualização no cadastro em tempo real
     function atualizarVisualizacao() {
         document.getElementById("prevFabricante").querySelector("span").textContent =
-            document.getElementById("fabricante").value || "Não informado";
+            document.getElementById("fabricante").value || "";
         document.getElementById("prevModelo").querySelector("span").textContent =
-            document.getElementById("modelo").value || "Não informado";
+            document.getElementById("modelo").value || "";
         document.getElementById("prevAno").querySelector("span").textContent =
-            document.getElementById("ano").value || "Não informado";
+            document.getElementById("ano").value || "";
         document.getElementById("prevDono").querySelector("span").textContent =
-            document.getElementById("quantidadeDono").value || "Não informado";
+            document.getElementById("quantidadeDono").value || "";
         document.getElementById("prevKM").querySelector("span").textContent =
-            document.getElementById("km").value || "Não informado";
-        const preco = document.getElementById("preco").value || "0";
+            document.getElementById("km").value || "";
+        const preco = document.getElementById("preco").value || "";
         document.getElementById("prevValor").querySelector("span").textContent =
-            preco ? `R$ ${parseFloat(preco).toFixed(2)}` : "Não informado";
+            preco ? `R$ ${parseFloat(preco).toFixed(2)}` : "";
         document.getElementById("prevDescricao").querySelector("span").textContent =
-            document.getElementById("descricao").value || "Não informado";
-
+            document.getElementById("descricao").value || "";
+    
         const imagemInput = document.getElementById("imagemCarro").files[0];
         const previewImg = document.getElementById("carouselContainer").querySelector(".carousel");
         previewImg.innerHTML = ""; // Limpa carrossel
-
+    
         if (imagemInput) {
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -40,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
             previewImg.innerHTML = "<img src='img/fallback.png' style='width: 100%; border-radius: 8px;'>";
         }
     }
+    
 
     // Adiciona eventos para atualização em tempo real
     ["fabricante", "modelo", "ano", "quantidadeDono", "km", "preco", "descricao"].forEach((id) => {
@@ -47,28 +65,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     document.getElementById("imagemCarro").addEventListener("change", atualizarVisualizacao);
 
-    // Exibe o popup de sucesso
-    function mostrarPopupSucesso() {
-        if (popupSucesso) {
-            popupSucesso.style.display = "flex"; // Exibe o popup
-        } else {
-            console.error("Elemento popupSucesso não encontrado!");
-        }
-    }
-
     // Salva veículos no `localStorage`
     function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem) {
+        console.log("Salvando carro...");
         const veiculo = { fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem };
         const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
         carrosSalvos.push(veiculo);
         localStorage.setItem("carrosDisponiveis", JSON.stringify(carrosSalvos));
 
+        console.log("Carro salvo com sucesso!");
+
         carregarEstoque();
-       
+        mostrarPopupSucesso(); // Exibe o popup após salvar o veículo
     }
 
     // Carrega e exibe veículos no estoque
     function carregarEstoque() {
+        if (!stockSection) {
+            console.error("Elemento stock-list não encontrado!");
+            return;
+        }
+
         const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
         stockSection.innerHTML = "";
 
@@ -83,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             stockCard.innerHTML = `
                 <div class="car-image">
-                    <img src="${carro.imagem || "img/fallback.png"}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
+                    <img src="${carro.imagem || 'img/fallback.png'}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
                 </div>
                 <h3>${carro.fabricante} ${carro.modelo}</h3>
                 <p><strong>Ano:</strong> ${carro.ano}</p>
@@ -91,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Preço:</strong> R$ ${parseFloat(carro.preco).toFixed(2)}</p>
                 <p><strong>Dono(s):</strong> ${carro.quantidadeDono}</p>
                 <p><strong>Descrição:</strong> ${carro.descricao}</p>
-                <button class="delete-btn" data-index="${index}">🗑️ Excluir</button>
             `;
             stockSection.appendChild(stockCard);
         });
@@ -99,6 +115,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Evento de cadastro de veículos
     cadastrarBtn.addEventListener("click", function () {
+        console.log("Botão cadastrar clicado!");
+
         const fabricante = document.getElementById("fabricante").value.trim();
         const modelo = document.getElementById("modelo").value.trim();
         const ano = document.getElementById("ano").value.trim();
