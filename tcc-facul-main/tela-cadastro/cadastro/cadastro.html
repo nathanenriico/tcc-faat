@@ -73,10 +73,14 @@
     </div>
 
     <!-- Popup de Sucesso -->
-    <div id="popupSucesso" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000; text-align: center; border-radius: 8px;">
-        <p>Veículo cadastrado com sucesso!</p>
-        <button id="btnFecharPopup">Fechar</button>
+    <div id="popupSucesso" class="popup">
+        <div class="popup-content">
+            <h2>✅ Veículo cadastrado com sucesso!</h2>
+            <p>Seu veículo foi registrado no sistema com sucesso.</p>
+            <button id="btnFecharPopup">Fechar</button>
+        </div>
     </div>
+    
 
     <script src="cadastro.js" defer></script>
 </body>
