@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Atualiza visualização no cadastro em tempo real
     function atualizarVisualizacao() {
+        // Atualiza os campos de texto (já existentes)
         document.getElementById("prevFabricante").querySelector("span").textContent =
             document.getElementById("fabricante").value || "";
         document.getElementById("prevModelo").querySelector("span").textContent =
@@ -48,24 +49,30 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("prevDescricao").querySelector("span").textContent =
             document.getElementById("descricao").value || "";
     
-        const imagemInput = document.getElementById("imagemCarro").files[0];
+        // Atualiza a visualização do carrossel de imagens
+        const imagemInput = document.getElementById("imagemCarro").files;
         const previewImg = document.getElementById("carouselContainer").querySelector(".carousel");
-        previewImg.innerHTML = ""; // Limpa carrossel
+        previewImg.innerHTML = ""; // Limpa o conteúdo anterior
     
-        if (imagemInput) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.style.width = "100%";
-                img.style.borderRadius = "8px";
-                previewImg.appendChild(img);
-            };
-            reader.readAsDataURL(imagemInput);
+        if (imagemInput.length > 0) {
+            // Itera por todos os arquivos selecionados e cria um elemento <img> para cada um
+            Array.from(imagemInput).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    // Você pode ajustar as dimensões conforme necessário; aqui demos um exemplo:
+                    img.style.height = "200px"; 
+                    img.style.borderRadius = "8px";
+                    img.style.marginRight = "10px";
+                    previewImg.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
         } else {
             previewImg.innerHTML = "<img src='img/fallback.png' style='width: 100%; border-radius: 8px;'>";
         }
-    }
+    }    
     
 
     // Adiciona eventos para atualização em tempo real
