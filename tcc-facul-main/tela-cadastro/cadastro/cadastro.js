@@ -4,12 +4,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const popupSucesso = document.getElementById("popupSucesso");
     const btnFecharPopup = document.getElementById("btnFecharPopup");
 
-      // Exibe o popup de sucesso ao cadastrar um veículo
-      function mostrarPopupSucesso() {
+    // Garante que o popup fique escondido ao carregar a página
+    popupSucesso.style.display = "none";
+
+    // Exibe o popup de sucesso ao cadastrar um veículo
+    function mostrarPopupSucesso() {
         console.log("Tentando exibir o popup de sucesso...");
+        
         if (popupSucesso) {
-            popupSucesso.style.display = "flex"; // Exibe o popup
+            popupSucesso.style.display = "flex"; // Mostra o popup somente quando chamado
             console.log("Popup de sucesso exibido!");
+            
+            // Define um temporizador para esconder o popup automaticamente após alguns segundos
+            setTimeout(() => {
+                popupSucesso.style.display = "none";
+            }, 3000); // Oculta após 3 segundos
         } else {
             console.error("Elemento popupSucesso não encontrado!");
         }
@@ -76,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Carro salvo com sucesso!");
 
         carregarEstoque();
-        mostrarPopupSucesso(); // Exibe o popup após salvar o veículo
     }
 
     // Carrega e exibe veículos no estoque
@@ -116,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Evento de cadastro de veículos
     cadastrarBtn.addEventListener("click", function () {
         console.log("Botão cadastrar clicado!");
-
+    
         const fabricante = document.getElementById("fabricante").value.trim();
         const modelo = document.getElementById("modelo").value.trim();
         const ano = document.getElementById("ano").value.trim();
@@ -125,22 +133,28 @@ document.addEventListener("DOMContentLoaded", function () {
         const preco = document.getElementById("preco").value.trim();
         const descricao = document.getElementById("descricao").value.trim();
         const imagemInput = document.getElementById("imagemCarro").files[0];
-
+    
         if (!fabricante || !modelo || !ano || !quantidadeDono || !km || !preco || !descricao) {
             alert("Por favor, preencha todos os campos!");
             return;
         }
-
+    
+        let imagem = "img/fallback.png"; // Define uma imagem padrão
+    
         if (imagemInput) {
             const reader = new FileReader();
             reader.onloadend = function () {
-                salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, reader.result);
+                imagem = reader.result;
+                salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem);
+                mostrarPopupSucesso(); // Exibe o popup **após salvar**
             };
             reader.readAsDataURL(imagemInput);
         } else {
-            salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, "img/fallback.png");
+            salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagem);
+            mostrarPopupSucesso(); // Exibe o popup **após salvar**
         }
     });
+    
 
     carregarEstoque(); // Inicializa estoque ao carregar a página
 });
