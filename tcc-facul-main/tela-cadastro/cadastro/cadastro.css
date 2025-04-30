@@ -227,22 +227,25 @@ h1 {
     border-radius: 10px;
 }
 
-.carousel {
+/* Container do carrossel na área de visualização no app */
+#carouselContainer .carousel {
     display: flex;
-    overflow-x: auto;
     gap: 10px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
+    overflow-x: auto;   /* Permite rolagem horizontal */
+    scroll-behavior: smooth; /* Para uma transição suave ao arrastar */
     padding: 10px;
-    border-radius: 8px;
+    background: #f8f9fa;
+    border-radius: 10px;
 }
 
-.carousel img {
-    max-width: 120px;
-    height: auto;
+/* Opcional: estilize as imagens do carrossel */
+#carouselContainer .carousel img {
+    /* Ajuste a altura ou largura conforme necessário */
+    height: 200px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;  /* Garante que as imagens não encolham */
 }
+
 
 /* POPUP DE SUCESSO */
 .popup {
