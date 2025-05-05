@@ -95,20 +95,20 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Elemento stock-list não encontrado!");
             return;
         }
-
+    
         // Busca todos os veículos salvos (não há limite definido)
         const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
         stockSection.innerHTML = "";
-
+    
         if (carrosSalvos.length === 0) {
             stockSection.innerHTML = "<p>Nenhum carro no estoque.</p>";
             return;
         }
-
+    
         carrosSalvos.forEach((carro) => {
             const stockCard = document.createElement("div");
             stockCard.classList.add("stock-card");
-            // Exibe a primeira imagem do array "imagens" – se não houver, usa fallback
+            // Template com a imagem, informações e container de botões
             stockCard.innerHTML = `
                 <div class="car-image">
                     <img src="${(carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : 'img/fallback.png'}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
@@ -119,10 +119,45 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Preço:</strong> R$ ${parseFloat(carro.preco).toFixed(2)}</p>
                 <p><strong>Dono(s):</strong> ${carro.quantidadeDono}</p>
                 <p><strong>Descrição:</strong> ${carro.descricao}</p>
+                <div class="button-container">
+                    <button class="whatsapp-btn">Entrar em Contato via WhatsApp</button>
+                    <button class="financiamento-btn">Simular Financiamento</button>
+                </div>
             `;
             stockSection.appendChild(stockCard);
+    
+            // Configuração do botão do WhatsApp
+            const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
+            whatsappBtn.addEventListener("click", function () {
+                const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} KM.`;
+                const numeroWhatsapp = "5511999999999"; // Substitua pelo número correto
+                const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
+                window.open(urlWhatsapp, "_blank");
+            });
+            
+            // Dentro do laço que processa cada veículo:
+            const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
+            financiamentoBtn.addEventListener("click", function () {
+              // Verifica os dados do carro para debugar
+              console.log("Objeto carro recebido:", carro);
+            
+              const params = new URLSearchParams({
+                fabricante: fabricante,
+                modelo: modelo,
+                ano: ano,
+                preco: preco,
+                km: km
+              });
+              
+              console.log("Parâmetros gerados:", params.toString());
+              alert("Redirecionando com:\n" + params.toString());
+            
+              // Redireciona usando caminho absoluto
+              window.location.href = "/tcc-facul-main/tcc-facul-main/tela-cliente/financiamento/financiamento.html?" + params.toString();
+            });
         });
     }
+    
 
     // Evento de cadastro de veículos
     cadastrarBtn.addEventListener("click", function () {
