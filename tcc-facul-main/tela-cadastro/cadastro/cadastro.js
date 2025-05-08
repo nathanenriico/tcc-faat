@@ -41,8 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("prevKM").querySelector("span").textContent =
             document.getElementById("km").value || "";
         const preco = document.getElementById("preco").value || "";
+        // Formatado para reais utilizando toLocaleString
         document.getElementById("prevValor").querySelector("span").textContent =
-            preco ? `R$ ${parseFloat(preco).toFixed(2)}` : "";
+            preco ? parseFloat(preco).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "";
         document.getElementById("prevDescricao").querySelector("span").textContent =
             document.getElementById("descricao").value || "";
 
@@ -75,8 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     document.getElementById("imagemCarro").addEventListener("change", atualizarVisualizacao);
 
-     // Salva veículos no localStorage (sem limite de número)
-     function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens) {
+    // Salva veículos no localStorage (sem limite de número)
+    function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens) {
         console.log("Salvando carro...");
         // Cria o objeto veículo – usando "imagens" (um array)
         const veiculo = { fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens };
@@ -116,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h3>${carro.fabricante} ${carro.modelo}</h3>
                 <p><strong>Ano:</strong> ${carro.ano}</p>
                 <p><strong>KM:</strong> ${carro.km}</p>
-                <p><strong>Preço:</strong> R$ ${parseFloat(carro.preco).toFixed(2)}</p>
+                <p><strong>Preço:</strong> ${parseFloat(carro.preco).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
                 <p><strong>Dono(s):</strong> ${carro.quantidadeDono}</p>
                 <p><strong>Descrição:</strong> ${carro.descricao}</p>
                 <div class="button-container">
@@ -135,25 +136,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.open(urlWhatsapp, "_blank");
             });
             
-            // Dentro do laço que processa cada veículo:
+            // Configuração do botão de simulação de financiamento
             const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
             financiamentoBtn.addEventListener("click", function () {
-              // Verifica os dados do carro para debugar
+              // Para fins de depuração, exibindo os dados do carro
               console.log("Objeto carro recebido:", carro);
-            
               const params = new URLSearchParams({
-                fabricante: fabricante,
-                modelo: modelo,
-                ano: ano,
-                preco: preco,
-                km: km
+                fabricante: carro.fabricante,
+                modelo: carro.modelo,
+                ano: carro.ano,
+                preco: carro.preco,
+                km: carro.km
               });
-              
               console.log("Parâmetros gerados:", params.toString());
               alert("Redirecionando com:\n" + params.toString());
-            
-              // Redireciona usando caminho absoluto
-              window.location.href = "/tcc-facul-main/tcc-facul-main/tela-cliente/financiamento/financiamento.html?" + params.toString();
+              // Redireciona usando caminho absoluto (ajuste se necessário)
+              window.location.href = "../financiamento/financiamento.html?" + params.toString();
             });
         });
     }
