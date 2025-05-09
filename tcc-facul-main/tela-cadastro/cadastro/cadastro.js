@@ -1,4 +1,11 @@
-document.addEventListener("DOMContentLoaded", function () {
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const supabaseUrl = 'https://jmusacsvgkeqaoorzfwa.supabase.co'
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptdXNhY3N2Z2tlcWFvb3J6ZndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NzEzMjMsImV4cCI6MjA2MjE0NzMyM30.ApkfhnRPQuaF3ozZcdb0CtLziCf5O-M0EIYk4AUecrY";
+
+
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+ document.addEventListener("DOMContentLoaded", function () {
     const stockSection = document.querySelector(".stock-list");
     const cadastrarBtn = document.getElementById("cadastrar");
     const popupSucesso = document.getElementById("popupSucesso");
@@ -6,6 +13,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Garante que o popup fique escondido ao carregar a página
     popupSucesso.style.display = "none";
+    const elemento = document.querySelector(".algum-elemento");
+
+if (elemento) {
+    elemento.style.display = "block"; // Só executa se o elemento existir
+} else {
+    console.error("❌ Elemento não encontrado no DOM!");
+}
+
 
     // Exibe o popup de sucesso ao cadastrar um veículo
     function mostrarPopupSucesso() {
@@ -75,40 +90,64 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     document.getElementById("imagemCarro").addEventListener("change", atualizarVisualizacao);
 
-     // Salva veículos no localStorage (sem limite de número)
-     function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens) {
-        console.log("Salvando carro...");
-        // Cria o objeto veículo – usando "imagens" (um array)
-        const veiculo = { fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens };
-        // Busca o array de veículos já salvos e adiciona o novo
-        const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
-        carrosSalvos.push(veiculo);
-        localStorage.setItem("carrosDisponiveis", JSON.stringify(carrosSalvos));
 
-        console.log("Carro salvo com sucesso!");
-        carregarEstoque();
+
+
+
+
+    
+
+     // Salva veículos no localStorage (sem limite de número)
+   async function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens) {
+    console.log("Salvando carro no Supabase...")
+
+    const { data, error } = await supabase.from('carro').insert([
+        {
+            fabricante,
+            modelo,
+            ano: parseInt(ano),
+            quantidade_dono: parseInt(quantidadeDono),
+            km: parseInt(km),
+            preco: parseFloat(preco),
+            descricao,
+            imagens
+        }
+    ]);
+
+    if (error) {
+        console.error("Erro ao salvar carro:", error.message);
+        return;
     }
 
+    console.log("Carro salvo no Supabase:", data);
+    carregarEstoque(); 
+    mostrarPopupSucesso();
+}
+
+
     // Carrega e exibe veículos do localStorage
-    function carregarEstoque() {
+    async function carregarEstoque() {
         if (!stockSection) {
             console.error("Elemento stock-list não encontrado!");
             return;
         }
     
-        // Busca todos os veículos salvos (não há limite definido)
-        const carrosSalvos = JSON.parse(localStorage.getItem("carrosDisponiveis")) || [];
-        stockSection.innerHTML = "";
+        console.log("Carregando estoque do Supabase...");
+        const { data: carrosSalvos, error } = await supabase.from('carro').select('*');
     
-        if (carrosSalvos.length === 0) {
-            stockSection.innerHTML = "<p>Nenhum carro no estoque.</p>";
+        if (error) {
+            console.error("Erro ao carregar estoque:", error.message);
             return;
         }
+    
+        stockSection.innerHTML = carrosSalvos.length === 0 
+            ? "<p>Nenhum carro no estoque.</p>" 
+            : "";
     
         carrosSalvos.forEach((carro) => {
             const stockCard = document.createElement("div");
             stockCard.classList.add("stock-card");
-            // Template com a imagem, informações e container de botões
+    
             stockCard.innerHTML = `
                 <div class="car-image">
                     <img src="${(carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : 'img/fallback.png'}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
@@ -117,14 +156,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Ano:</strong> ${carro.ano}</p>
                 <p><strong>KM:</strong> ${carro.km}</p>
                 <p><strong>Preço:</strong> R$ ${parseFloat(carro.preco).toFixed(2)}</p>
-                <p><strong>Dono(s):</strong> ${carro.quantidadeDono}</p>
+                <p><strong>Dono(s):</strong> ${carro.quantidade_dono}</p>
                 <p><strong>Descrição:</strong> ${carro.descricao}</p>
-                <div class="button-container">
-                    <button class="whatsapp-btn">Entrar em Contato via WhatsApp</button>
-                    <button class="financiamento-btn">Simular Financiamento</button>
-                </div>
             `;
             stockSection.appendChild(stockCard);
+        
+    
+    
     
             // Configuração do botão do WhatsApp
             const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
@@ -153,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
               alert("Redirecionando com:\n" + params.toString());
             
               // Redireciona usando caminho absoluto
-              window.location.href = "/tcc-facul-main/tcc-facul-main/tela-cliente/financiamento/financiamento.html?" + params.toString();
+              window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.js?" + params.toString();
             });
         });
     }
