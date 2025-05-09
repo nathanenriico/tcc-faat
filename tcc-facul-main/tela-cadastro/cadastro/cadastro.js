@@ -56,8 +56,9 @@ if (elemento) {
         document.getElementById("prevKM").querySelector("span").textContent =
             document.getElementById("km").value || "";
         const preco = document.getElementById("preco").value || "";
+        // Formatado para reais utilizando toLocaleString
         document.getElementById("prevValor").querySelector("span").textContent =
-            preco ? `R$ ${parseFloat(preco).toFixed(2)}` : "";
+            preco ? parseFloat(preco).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "";
         document.getElementById("prevDescricao").querySelector("span").textContent =
             document.getElementById("descricao").value || "";
 
@@ -173,20 +174,18 @@ if (elemento) {
                 window.open(urlWhatsapp, "_blank");
             });
             
-            // Dentro do laço que processa cada veículo:
+            // Configuração do botão de simulação de financiamento
             const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
             financiamentoBtn.addEventListener("click", function () {
-              // Verifica os dados do carro para debugar
+              // Para fins de depuração, exibindo os dados do carro
               console.log("Objeto carro recebido:", carro);
-            
               const params = new URLSearchParams({
-                fabricante: fabricante,
-                modelo: modelo,
-                ano: ano,
-                preco: preco,
-                km: km
+                fabricante: carro.fabricante,
+                modelo: carro.modelo,
+                ano: carro.ano,
+                preco: carro.preco,
+                km: carro.km
               });
-              
               console.log("Parâmetros gerados:", params.toString());
               alert("Redirecionando com:\n" + params.toString());
             
