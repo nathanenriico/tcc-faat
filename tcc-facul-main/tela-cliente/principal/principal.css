@@ -45,13 +45,15 @@ body {
 
 /* Header */
 .header {
-  background-image: url('experiencia-do-cliente-loja-de-carros-4 1.png');
+  /* Adiciona um gradiente semi-transparente sobre a imagem para maior contraste */
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('experiencia-do-cliente-loja-de-carros-4 1.png');
   background-size: cover;
   background-position: center;
   padding: 150px 20px 80px;
-  color: white;
+  color: #fff;
   position: relative;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .header .overlay {
@@ -60,73 +62,120 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+  /* Mantém o overlay, podendo usar um pouco de blur para suavizar a imagem */
   background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
 }
 
 .header-content {
   position: relative;
   z-index: 2;
+  animation: fadeIn 1.5s ease-out;
 }
 
 .header-content h1 {
   font-size: 48px;
   margin: 0 0 20px;
+  /* Adiciona sombra no texto para destacá-lo */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .header-content p {
   font-size: 20px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
+
+/* Animação para o conteúdo do header */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Seção de Categorias */
 .categories {
-  padding: 20px;
+  padding: 40px 20px;
   background-color: #fff;
 }
 
 .categories h2 {
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   text-align: center;
-  font-size: 24px; /* Tamanho ajustado para desktop */
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+  font-family: 'Arial', sans-serif;
+  text-transform: lowercase;  /* Todas as letras em minúsculo */
+  letter-spacing: 1px;
 }
 
+.categories h2::first-letter {
+  text-transform: uppercase;  /* Só a primeira letra em maiúsculo */
+}
+
+
+/* Container das Categorias */
 .categories-container {
   display: flex;
   flex-wrap: wrap;
+  gap: 20px; /* Espaçamento maior para dar mais "respiro" */
   justify-content: center;
-  gap: 15px; /* Espaçamento entre os itens */
+  align-items: stretch;
 }
 
+/* Cada Card de Categoria */
 .category {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  padding: 15px;
+  background: #f8f8f8;  /* fundo claro e limpo */
+  border-radius: 15px;  /* bordas mais arredondadas */
+  width: 240px;         /* largura um pouco maior */
+  padding: 20px;
   text-align: center;
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Container exclusivo para a imagem da categoria: ajuste para imagem circular */
+.category .category-image {
+  width: 150px;              /* largura fixa para que a imagem fique quadrada */
+  height: 150px;             /* altura fixa para garantir formato quadrado */
+  overflow: hidden;
+  border-radius: 50%;        /* torna a imagem circular */
+  margin: 0 auto 15px;       /* centraliza horizontalmente e define espaçamento inferior */
+}
+
+.category .category-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px; /* Largura fixa para desktops */
 }
 
-.category:hover {
-  transform: scale(1.05); /* Efeito de hover */
+.category:hover .category-image img {
+  transform: scale(1.1);
 }
 
-.category img {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 10px;
-}
-
-.category:hover {
-  transform: scale(1.05);
+/* Nome da Categoria em negrito */
+.category p {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;      /* texto em negrito */
+  color: #444;
+  text-transform: capitalize;
 }
 
 /* Cards organizados em fileiras */
-/* Responsividade geral para a seção de carros */
 .stock-list {
   padding: 20px;
   background-color: #fff;
@@ -140,44 +189,66 @@ body {
   color: #333;
 }
 
+.stock-list p {
+  text-align: justify;
+}
+
+
+/* Contêiner dos cards usando CSS Grid */
 .carros-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* Centraliza os cards horizontalmente */
-  gap: 20px; /* Espaçamento entre os cards */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  /* Quatro colunas iguais */
+  gap: 20px;                              /* Espaçamento entre os cards */
+  padding: 20px;                          /* Espaçamento interno */
+  max-width: 1200px;                      /* Largura máxima do container */
+  margin: 20px auto;                      /* Centraliza o container na página */
 }
 
+/* Estilo para cada card */
+.car-card,
 .stock-card {
-background-color: white;
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-border-radius: 8px;
-padding: 10px;
-width: 300px;
-text-align: center;
-transition: transform 0.3s ease;
-}
-
-.stock-card:hover {
-transform: translateY(-5px);
-}
-
-/* Estilo para os cards dos carros */
-.car-card {
+  /* Ao usar grid, é melhor deixar a largura 100% para preencher a célula, com um max-width para limitar */
+  width: 100%;
+  max-width: 300px;
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 10px;
-  width: 300px; /* Largura padrão para telas maiores */
-  text-align: center;
   transition: transform 0.3s ease;
-}
-.car-card:hover {
-  transform: translateY(-5px); /* Efeito de hover */
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;  /* Centraliza, caso a célula seja maior que o card */
 }
 
-.car-image img {
+.stock-card h2,
+.stock-card h3,
+.car-card h3 {
+  text-align: center;
+}
+
+.stock-card p,
+.car-card p {
+  font-size: 15px;
+  margin: 5px 0;
+  color: #666;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  text-align: justify;
+}
+
+.stock-card:hover,
+.car-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Garante que as imagens se ajustem corretamente */
+.car-image img,
+.carousel-image,
+.category-image img {
   width: 100%;
   height: auto;
+  display: block;
   border-radius: 8px;
   margin-bottom: 10px;
 }
@@ -222,6 +293,51 @@ margin-top: 10px;
   object-fit: cover; /* Mantém proporção, corta excessos */
   display: block; /* Remove espaços adicionais */
 }
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.carousel-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Estilo comum para ambos botões */
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+/* Botão da esquerda */
+.carousel-prev {
+  left: 10px;
+}
+
+/* Botão da direita */
+.carousel-next {
+  right: 10px;
+}
+
+/* Efeito hover para os botões */
+.carousel-prev:hover,
+.carousel-next:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
 
 button.whatsapp-btn {
   background-color: #25D366; /* cor do WhatsApp */
@@ -375,4 +491,8 @@ footer {
 .categories-container {
     gap: 5px; /* Reduz ainda mais o espaçamento entre os itens */
 }
+.carros-container {
+    grid-template-columns: 1fr;
+  }
+
 }

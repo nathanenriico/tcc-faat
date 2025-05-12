@@ -1,58 +1,104 @@
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
+ /* Reset e estilos básicos */
+ * {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
     font-family: Arial, sans-serif;
-}
+    padding: 15px;
+  }
 
-.container {
-    text-align: center;
-    background: #fff;
-    padding: 20px;
+  .container {
+    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    width: 400px;
-}
-
-.car-info-header img {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     width: 100%;
-    max-width: 300px;
-    margin-bottom: 20px;
+    max-width: 400px;
+    padding: 20px;
+    margin: auto;
+  }
+
+  .car-info-header img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
     border-radius: 8px;
-}
+    margin-bottom: 20px;
+    display: block;
+  }
 
-.form-group {
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
     margin-bottom: 15px;
-}
+  }
 
-label {
+  .form-group label {
     display: block;
     font-weight: bold;
-}
+    margin-bottom: 5px;
+    color: #555;
+  }
 
-input, select {
+  .form-group input,
+  .form-group select {
     width: 100%;
     padding: 10px;
-    margin-top: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
     text-align: center;
-}
+    transition: border-color 0.3s ease;
+  }
 
-.btn-submit {
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #007BFF;
+    outline: none;
+  }
+
+  .btn-submit {
+    display: inline-block;
     width: 100%;
     padding: 12px;
-    background: #007BFF;
-    color: white;
+    margin-top: 10px;
+    background-color: #007BFF;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
     font-size: 16px;
-}
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
 
-.btn-submit:hover {
-    background: #0056b3;
-}
+  .btn-submit:hover {
+    background-color: #0056b3;
+  }
+
+  /* Estilos responsivos para telas menores */
+  @media (max-width: 480px) {
+    .container {
+      padding: 15px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      padding: 8px;
+      font-size: 14px;
+    }
+    
+    .btn-submit {
+      padding: 10px;
+      font-size: 14px;
+    }
+  }

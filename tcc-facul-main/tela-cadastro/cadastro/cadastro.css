@@ -12,6 +12,14 @@ body {
     background-color: #f4f4f4;
 }
 
+/* Regra para garantir que o texto se quebre dentro do contêiner */
+#prevDescricao span {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+
 /* Sidebar (se houver) */
 .sidebar {
     width: 250px;
@@ -33,6 +41,7 @@ body {
 
 /* Área de perfil */
 .profile-area {
+    text-align: center;
     margin-top: 30px;
     padding: 20px;
     background: #f9f9f9;
@@ -62,12 +71,26 @@ body {
 .profile-card h3 {
     font-size: 20px;
     color: #333;
+    /* Ajusta o espaçamento acima e abaixo do nome */
+    margin: 10px;
 }
 
 .profile-card p {
     font-size: 14px;
     color: #666;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Botão */
+.profile-card button {
+    margin-top: 20px; /* Espaço acima do botão */
+    padding: 10px 20px; /* Espaçamento interno para uma área clicável maior */
+    font-size: 16px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 /* Botões gerais */

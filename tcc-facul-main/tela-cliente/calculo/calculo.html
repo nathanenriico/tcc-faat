@@ -1,62 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Cálculo de Juros e Parcelas</title>
-    <link rel="stylesheet" href="calculo-financiamento.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cálculo de Juros e Parcelas</title>
+  <link rel="stylesheet" href="calculo-financiamento.css">
 </head>
 <body>
-    <div class="container">
-        <div class="car-info-header">
-            <img id="carImage" src="img/fallback.png" alt="Imagem do Carro">
-            <h2>Cálculo do Financiamento</h2>
-        </div>
-
-        <form class="financiamento-form" id="calculoForm">
-            <div class="form-group">
-                <label for="valorTotal">Valor do veículo</label>
-                <input type="text" id="valorTotal" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="entrada">Entrada</label>
-                <input type="text" id="entrada">
-            </div>
-
-            <div class="form-group">
-                <label for="parcelas">Número de Parcelas</label>
-                <select id="parcelas">
-                    <option value="12">12x</option>
-                    <option value="24">24x</option>
-                    <option value="36" selected>36x</option>
-                    <option value="48">48x</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="taxaJuros">Taxa de Juros (% ao mês)</label>
-                <input type="text" id="taxaJuros" value="1.5">
-            </div>
-
-            <div class="form-group">
-                <label for="valorFinanciado">Valor a Financiar</label>
-                <input type="text" id="valorFinanciado" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="valorParcela">Valor da Parcela</label>
-                <input type="text" id="valorParcela" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="valorFinal">Valor Total Financiado</label>
-                <input type="text" id="valorFinal" readonly>
-            </div>
-
-            <button type="button" class="btn-submit" onclick="calcularFinanciamento()">Calcular</button>
-        </form>
+  <div class="container">
+    <div class="car-info-header">
+      <!-- A imagem será definida via JavaScript -->
+      <img id="carImage" src="img/fallback.png" alt="Imagem do Veículo">
     </div>
+    <h1>Financiamento do Veículo</h1>
+    <form onsubmit="event.preventDefault(); calcularFinanciamento();">
+      <div class="form-group">
+        <label for="valorTotal">Valor Total do Veículo</label>
+        <input type="text" id="valorTotal" name="valorTotal" readonly>
+      </div>
+      <div class="form-group">
+        <label for="entrada">Entrada (10%)</label>
+        <input type="text" id="entrada" name="entrada">
+      </div>
+      <div class="form-group">
+        <label for="valorFinanciado">Valor a Financiar</label>
+        <input type="text" id="valorFinanciado" name="valorFinanciado" readonly>
+      </div>
+      <div class="form-group">
+        <label for="parcelas">Número de Parcelas</label>
+        <select id="parcelas" name="parcelas">
+          <option value="12">12x</option>
+          <option value="24">24x</option>
+          <option value="36" selected>36x</option>
+          <option value="48">48x</option>
+          <option value="60">60x</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="taxaJuros">Taxa de Juros (% ao mês)</label>
+        <input type="number" id="taxaJuros" name="taxaJuros" step="0.01" value="1.5">
+      </div>
+      <div class="form-group">
+        <label for="valorParcela">Valor da Parcela</label>
+        <input type="text" id="valorParcela" name="valorParcela" readonly>
+      </div>
+      <div class="form-group">
+        <label for="valorFinal">Valor Total Financiado</label>
+        <input type="text" id="valorFinal" name="valorFinal" readonly>
+      </div>
+    </form>
+  </div>
 
-    <script src="calculo-financiamento.js"></script>
+  <script src="calculo-financiamento.js"></script>
 </body>
 </html>

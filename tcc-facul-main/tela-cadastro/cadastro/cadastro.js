@@ -91,13 +91,6 @@ if (elemento) {
     });
     document.getElementById("imagemCarro").addEventListener("change", atualizarVisualizacao);
 
-
-
-
-
-
-    
-
      // Salva veículos no localStorage (sem limite de número)
    async function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, descricao, imagens) {
     console.log("Salvando carro no Supabase...")
@@ -125,7 +118,6 @@ if (elemento) {
     mostrarPopupSucesso();
 }
 
-
     // Carrega e exibe veículos do localStorage
     async function carregarEstoque() {
         if (!stockSection) {
@@ -150,21 +142,18 @@ if (elemento) {
             stockCard.classList.add("stock-card");
     
             stockCard.innerHTML = `
-                <div class="car-image">
-                    <img src="${(carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : 'img/fallback.png'}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
-                </div>
-                <h3>${carro.fabricante} ${carro.modelo}</h3>
-                <p><strong>Ano:</strong> ${carro.ano}</p>
-                <p><strong>KM:</strong> ${carro.km}</p>
-                <p><strong>Preço:</strong> R$ ${parseFloat(carro.preco).toFixed(2)}</p>
-                <p><strong>Dono(s):</strong> ${carro.quantidade_dono}</p>
-                <p><strong>Descrição:</strong> ${carro.descricao}</p>
-            `;
+            <div class="car-image">
+            <img src="${(carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : 'img/fallback.png'}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
+            </div>
+            <h3>${carro.fabricante} ${carro.modelo}</h3>
+            <p><strong>Ano:</strong> ${carro.ano}</p>
+            <p><strong>KM:</strong> ${carro.km}</p>
+            <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
+            <p><strong>Dono(s):</strong> ${ carro.quantidade_dono ?? carro.quantidadeDono ?? 0 }</p>
+            <p class="descricao"><strong>Descrição:</strong> ${carro.descricao}</p>
+                `;
             stockSection.appendChild(stockCard);
-        
-    
-    
-    
+  
             // Configuração do botão do WhatsApp
             const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
             whatsappBtn.addEventListener("click", function () {
@@ -174,28 +163,45 @@ if (elemento) {
                 window.open(urlWhatsapp, "_blank");
             });
             
-            // Configuração do botão de simulação de financiamento
-            const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
-            financiamentoBtn.addEventListener("click", function () {
-              // Para fins de depuração, exibindo os dados do carro
-              console.log("Objeto carro recebido:", carro);
-              const params = new URLSearchParams({
-                fabricante: carro.fabricante,
-                modelo: carro.modelo,
-                ano: carro.ano,
-                preco: carro.preco,
-                km: carro.km
-              });
-              console.log("Parâmetros gerados:", params.toString());
-              alert("Redirecionando com:\n" + params.toString());
-            
-              // Redireciona usando caminho absoluto
-              window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.js?" + params.toString();
-            });
-        });
-    }
-    
+       // Configuração do botão de simulação de financiamento
+                const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
+                financiamentoBtn.addEventListener("click", function () {
+                console.log("Objeto carro recebido:", carro);
+                console.log("Valor do carro (raw):", carro.preco);
 
+                    // Função para converter uma string formatada (ex.: "R$ 57.000,00")
+                    // para um número real (ex.: 57000)
+                     function convertPrice(priceStr) {
+                     if (!priceStr) return 0;
+                     let cleaned = priceStr.toString().replace(/[^\d,\.]/g, "");
+                     cleaned = cleaned.replace(/\./g, "").replace(",", ".");
+                     return parseFloat(cleaned);
+                         }
+  
+                    // Se o preço já for numérico, usa-o; caso contrário, converte-o
+                     let precoReal = typeof carro.preco === "number" ? carro.preco : convertPrice(carro.preco);
+                     console.log("Preço convertido para número:", precoReal);
+
+                     // Cria os parâmetros para a URL, incluindo o ID do carro
+                     const params = new URLSearchParams({
+                     id: carro.id, // envia o identificador único para consulta
+                     fabricante: carro.fabricante,
+                     modelo: carro.modelo,
+                      ano: carro.ano,
+                       preco: precoReal, // utilizando o valor convertido
+                      km: carro.km,
+                     imagem: (carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : "img/fallback.png"
+                     });
+
+                     console.log("Parâmetros gerados:", params.toString());
+                     alert("Redirecionando com:\n" + params.toString());
+
+                    // Redireciona para a página de financiamento
+                     window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/financiamento.html?" + params.toString();
+                        });
+                       });
+                     }
+    
     // Evento de cadastro de veículos
     cadastrarBtn.addEventListener("click", function () {
         console.log("Botão cadastrar clicado!");

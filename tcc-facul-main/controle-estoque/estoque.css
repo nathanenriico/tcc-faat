@@ -67,6 +67,16 @@ header {
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
+.stock-card p {
+    font-size: 15px;
+    margin: 5px 0;
+    color: #666;
+    word-wrap: break-word;      /* Força a quebra de linha em palavras longas */
+    overflow-wrap: break-word;  /* Garante a quebra de linha em navegadores modernos */
+    white-space: normal;        /* Evita que o texto fique em uma única linha */
+}
+
+
 /* 🔹 Slider dentro do Card */
 .slider {
     display: flex;
