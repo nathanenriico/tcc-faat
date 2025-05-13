@@ -146,7 +146,9 @@ async function carregarCarrosTelaCliente() {
       <p><strong>Dono(s):</strong> ${ carro.quantidade_dono ?? carro.quantidadeDono ?? 0 }</p>
       <p><strong>Descrição:</strong> ${carro.descricao}</p>
       <div class="button-container">
-          <button class="whatsapp-btn">Entrar em Contato via WhatsApp</button>
+<button class="whatsapp-btn" aria-label="Contato WhatsApp">
+  <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
+</button>
           <button class="financiamento-btn">Simular Financiamento</button>
       </div>
     `;
@@ -252,7 +254,10 @@ async function filtrarCarrosPorModelo(modelo) {
       <p><strong>Dono(s):</strong> ${ carro.quantidade_dono ?? carro.quantidadeDono ?? 0 }</p>
       <p><strong>Descrição:</strong> ${carro.descricao}</p>
       <div class="button-container">
-          <button class="whatsapp-btn">Entrar em Contato via WhatsApp</button>
+<button class="whatsapp-btn" aria-label="Contato WhatsApp">
+  <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
+</button>
+</button>
           <button class="financiamento-btn">Simular Financiamento</button>
       </div>
     `;

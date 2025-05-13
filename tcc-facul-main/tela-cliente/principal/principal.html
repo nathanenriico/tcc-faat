@@ -9,18 +9,30 @@
 
 <body>
 
-  <!-- Navbar fixa -->
-  <nav class="navbar">
+<!-- Navbar fixa -->
+<nav class="navbar">
+  <div class="navbar-left">
     <div class="logo">
       <img src="logo.png" alt="Logo">
     </div>
+  </div>
+  <div class="navbar-center">
     <ul class="nav-links">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Categorias</a></li>
-      <li><a href="#">Carros</a></li>
-      <li><a href="#">Contato</a></li>
+      <li><a href="../principal/principal.html">Home</a></li>
+      <li><a href="../principal/principal.html#carros">Carros</a></li>
+      <li><a href="../principal/principal.html#contato">Contato</a></li>
     </ul>
-  </nav>
+  </div>
+  <div class="navbar-right">
+    <a href="/tcc-facul-main/login-tela/login/login.html" class="login-link" aria-label="Entrar">
+      <div class="login-icon-container">
+        <img src="perfil-de-usuario.png" alt="Login Icon" class="login-icon">
+      </div>
+      <span class="login-text">Entrar</span>
+    </a>
+  </div>
+</nav>
+
 
   <!-- Header -->
   <header class="header">
@@ -31,16 +43,17 @@
     </div>
   </header>
 
-  <!-- Seção de Categorias -->
-  <section class="categories">
-    <h2>Categorias</h2>
-    <div class="categories-container">
-      <!-- Categorias serão geradas dinamicamente -->
-    </div>
-  </section>
+ <!-- Seção de Categorias -->
+<section class="categories" style="display: none;">
+  <h2>Categorias</h2>
+  <div class="categories-container">
+    <!-- Categorias serão geradas dinamicamente -->
+  </div>
+</section>
+
 
   <!-- Lista de Carros -->
-  <section class="stock-list">
+  <section class="stock-list" id="carros">
     <h2>Carros disponíveis</h2>
     <div class="carros-container">
         <!-- Os carros serão carregados dinamicamente aqui -->
@@ -49,7 +62,7 @@
 
   
   <!-- Rodapé -->
-  <footer>
+  <footer id="contato">
     <div class="footer-content">
       <div class="footer-section about">
         <h2>Sobre Nós</h2>
@@ -58,10 +71,9 @@
       <div class="footer-section links">
         <h2>Links Rápidos</h2>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Categorias</a></li>
-          <li><a href="#">Carros Disponíveis</a></li>
-          <li><a href="#">Contato</a></li>
+          <li><a href="./principal.html">Home</a></li>
+          <li><a href="../principal/principal.html#carros">Carros</a></li>
+          <li><a href="../principal/principal.html#contato">Contato</a></li>
         </ul>
       </div>
       <div class="footer-section contact">

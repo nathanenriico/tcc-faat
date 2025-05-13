@@ -71,7 +71,7 @@ async function carregarEstoque() {
       <h3>${carro.fabricante} ${carro.modelo}</h3>
       <p><strong>Ano:</strong> ${carro.ano}</p>
       <p><strong>KM:</strong> ${carro.km}</p>
-<p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
+      <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
       <p><strong>Dono(s):</strong> ${carro.quantidade_dono}</p>
       <p><strong>Descrição:</strong> ${carro.descricao}</p>
       <button class="delete-btn" data-id="${carro.id}">🗑️ Excluir</button>
@@ -205,7 +205,7 @@ async function filtrarPorModelo(modelo) {
       <h3>${carro.fabricante} ${carro.modelo}</h3>
       <p><strong>Ano:</strong> ${carro.ano}</p>
       <p><strong>KM:</strong> ${carro.km}</p>
-<p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
+      <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
       <p><strong>Dono(s):</strong> ${ carro.quantidade_dono ?? carro.quantidadeDono ?? 0 }</p>
       <p><strong>Descrição:</strong> ${carro.descricao}</p>
       <button class="delete-btn" data-id="${carro.id}">🗑️ Excluir</button>

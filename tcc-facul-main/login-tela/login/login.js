@@ -1,5 +1,16 @@
 // Aguarda o carregamento completo do DOM
 document.addEventListener("DOMContentLoaded", function() {
+
+ // Variável que simula a autorização: somente o dono (isOwner true) pode acessar esta página.
+  var isOwner = false; // Altere para true para permitir o acesso do dono
+
+  // Verifica se o usuário está autorizado; se não, exibe alerta e redireciona.
+  if (!isOwner) {
+    alert("Você não está autorizado a acessar a página de login.");
+    window.location.href = "/tcc-facul-main/login-tela/login/login.html";
+    return; // Impede a execução dos demais scripts
+  }
+
   // Evento de clique no texto "Esqueceu ou Alterar Senha?"
   const alterarSenhaLink = document.getElementById("alterarSenhaLink");
   if (alterarSenhaLink) {
@@ -13,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function() {
     window.location.href = "../criar conta/criarconta.html";
   };
 });
-
 
   // Preenche os campos automaticamente se os dados estiverem salvos
   const emailSalvo = localStorage.getItem("email");
@@ -231,3 +241,5 @@ function fecharPopup() {
   document.getElementById("popupSucesso").style.display = "none";
   window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
 }
+
+
