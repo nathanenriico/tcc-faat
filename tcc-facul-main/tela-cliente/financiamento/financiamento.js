@@ -1,44 +1,41 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Para depuração: exibe a URL completa e a query string
-    console.log("URL completa:", window.location.href);
-    console.log("Query string:", window.location.search);
-    
-    const params = new URLSearchParams(window.location.search);
-    
-    // Obtém os valores dos parâmetros
-    const fabricanteRaw = params.get("fabricante");
-    const modeloRaw = params.get("modelo");
-    const anoRaw = params.get("ano");
-    const precoRaw = params.get("preco");
-    const kmRaw = params.get("km");
+    console.log("🔍 URL completa:", window.location.href);
+    console.log("🔍 Query string recebida:", window.location.search);
 
-    console.log("Parâmetros lidos:", {
-        fabricante: fabricanteRaw,
-        modelo: modeloRaw,
-        ano: anoRaw,
-        preco: precoRaw,
-        km: kmRaw
+    const queryString = window.location.search;
+    if (!queryString) {
+        console.error("❌ Nenhum parâmetro encontrado na URL! Verifique o redirecionamento.");
+        return;
+    }
+
+    const params = new URLSearchParams(queryString);
+    console.log("✅ Parâmetros extraídos da URL:", {
+        fabricante: params.get("fabricante"),
+        modelo: params.get("modelo"),
+        ano: params.get("ano"),
+        preco: params.get("preco"),
+        km: params.get("km")
     });
 
-    // Aplica os valores aos elementos, tratando valores vazios com fallback
-    const fabricante = (fabricanteRaw && fabricanteRaw.trim() !== "") ? fabricanteRaw.trim() : "Não informado";
-    const modelo = (modeloRaw && modeloRaw.trim() !== "") ? modeloRaw.trim() : "Não informado";
-    const ano = (anoRaw && anoRaw.trim() !== "") ? anoRaw.trim() : "Não informado";
-    let preco = 0;
-    if (precoRaw && precoRaw.trim() !== "") {
-        preco = parseFloat(precoRaw);
-        if (isNaN(preco)) { preco = 0; }
+    function atualizarElemento(id, valor) {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            console.log(`✅ Atualizando elemento #${id} com:`, valor);
+            elemento.innerText = valor; // 🔥 Garante que o texto seja atualizado corretamente
+        } else {
+            console.error(`❌ Elemento #${id} não encontrado no HTML!`);
+        }
     }
-    const km = (kmRaw && kmRaw.trim() !== "") ? kmRaw.trim() : "Não informado";
 
-    // Atualiza os elementos da página
-    document.getElementById("fabricante").textContent = fabricante;
-    document.getElementById("modelo").textContent = modelo;
-    document.getElementById("ano").textContent = ano;
-    document.getElementById("preco").textContent = `R$ ${preco.toLocaleString("pt-BR")}`;
-    document.getElementById("km").textContent = km;
+    atualizarElemento("fabricante", params.get("fabricante") || "Não informado");
+    atualizarElemento("modelo", params.get("modelo") || "Não informado");
+    atualizarElemento("ano", params.get("ano") || "Não informado");
+    atualizarElemento("preco", `R$ ${parseFloat(params.get("preco") || 0).toLocaleString("pt-BR")}`);
+    atualizarElemento("km", params.get("km") || "Não informado");
 
-    // Exemplo de cálculo de financiamento (manter seu código existente)
+
+
+    // 🔥 **Simulação de financiamento**
     document.getElementById("calcular").addEventListener("click", function () {
         const entrada = Number(document.getElementById("entrada").value) || 0;
         const parcelas = Number(document.getElementById("parcelas").value);
@@ -54,8 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalPagar = valorParcela * parcelas;
         const totalJuros = totalPagar - valorFinanciado;
 
-        document.getElementById("valorParcela").textContent = `R$ ${valorParcela.toLocaleString("pt-BR")}`;
-        document.getElementById("totalPagar").textContent = `R$ ${totalPagar.toLocaleString("pt-BR")}`;
-        document.getElementById("totalJuros").textContent = `R$ ${totalJuros.toLocaleString("pt-BR")}`;
+        atualizarElemento("valorParcela", `R$ ${valorParcela.toLocaleString("pt-BR")}`);
+        atualizarElemento("totalPagar", `R$ ${totalPagar.toLocaleString("pt-BR")}`);
+        atualizarElemento("totalJuros", `R$ ${totalJuros.toLocaleString("pt-BR")}`);
     });
 });

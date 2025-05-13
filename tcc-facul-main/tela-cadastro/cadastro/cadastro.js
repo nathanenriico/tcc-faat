@@ -155,93 +155,103 @@ async function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, d
     console.log("Carro salvo no Supabase:", data);
     carregarEstoque(); 
     mostrarPopupSucesso();
-}
-
-// Função que carrega e exibe os veículos salvos no Supabase
-async function carregarEstoque() {
+}async function carregarEstoque() {
+    const stockSection = document.querySelector(".stock-list");
     if (!stockSection) {
-        console.error("Elemento stock-section não encontrado!");
+        console.error("❌ Elemento `.stock-list` não encontrado!");
         return;
     }
 
-    console.log("Carregando estoque do Supabase...");
+    console.log("🚗 Carregando estoque do Supabase...");
     const { data: carrosSalvos, error } = await supabase.from('carro').select('*');
 
     if (error) {
-        console.error("Erro ao carregar estoque:", error.message);
+        console.error("❌ Erro ao carregar estoque:", error.message);
         return;
     }
 
-    // Exibe mensagem se não houver carros
-    stockSection.innerHTML = carrosSalvos.length === 0 
-        ? "<p>Nenhum carro no estoque.</p>" 
-        : "";
+    stockSection.innerHTML = carrosSalvos.length === 0 ? "<p>Nenhum carro no estoque.</p>" : "";
 
-   carrosSalvos.forEach((carro) => {
-  const stockCard = document.createElement("div");
-  stockCard.classList.add("stock-card");
+    carrosSalvos.forEach((carro) => {
+        const stockCard = document.createElement("div");
+        stockCard.classList.add("stock-card");
 
-  // Insere os dados do carro como atributos de dados
-  stockCard.setAttribute("data-fabricante", carro.fabricante || "");
-  stockCard.setAttribute("data-modelo", carro.modelo || "");
-  stockCard.setAttribute("data-ano", carro.ano || "");
-  stockCard.setAttribute("data-preco", carro.preco || "");
-  stockCard.setAttribute("data-km", carro.km || "");
+        stockCard.dataset.fabricante = carro.fabricante || "Não informado";
+        stockCard.dataset.modelo = carro.modelo || "Não informado";
+        stockCard.dataset.ano = carro.ano || "0";
+        stockCard.dataset.preco = carro.preco ? carro.preco.toString() : "0";
+        stockCard.dataset.km = carro.km || "Não informado";
 
-  // Estrutura do card, incluindo botão de financiamento
-  stockCard.innerHTML = `
-    <div class="car-image">
-      <img src="${(carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : 'img/fallback.png'}" alt="${carro.modelo}" style="width: 100%; border-radius: 8px;">
-    </div>
-    <h3>${carro.fabricante} ${carro.modelo}</h3>
-    <p><strong>Ano:</strong> ${carro.ano}</p>
-    <p><strong>KM:</strong> ${carro.km}</p>
-    <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
-    <p class="descricao"><strong>Descrição:</strong> ${carro.descricao}</p>
-    <button class="whatsapp-btn">Contato WhatsApp</button>
-    <button class="financiamento-btn">Simular Financiamento</button>
-  `;
-  stockSection.appendChild(stockCard);
+        stockCard.innerHTML = `
+            <div class="car-image">
+                <img src="${carro.imagens?.[0] || 'img/fallback.png'}" 
+                     alt="${carro.modelo}" 
+                     style="width: 100%; border-radius: 8px;">
+            </div>
+            <h3>${carro.fabricante} ${carro.modelo}</h3>
+            <p><strong>Ano:</strong> ${carro.ano}</p>
+            <p><strong>KM:</strong> ${carro.km}</p>
+            <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
+            <p class="descricao"><strong>Descrição:</strong> ${carro.descricao}</p>
+            <button class="whatsapp-btn">Contato WhatsApp</button>
+            <button class="financiamento-btn">Simular Financiamento</button>
+        `;
 
-  // Configuração do botão de simulação de financiamento
-  const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
-  financiamentoBtn.addEventListener("click", function () {
-    // Lê os dados diretamente a partir dos atributos do card
-    const card = this.parentElement;
-    const fabricante = card.getAttribute("data-fabricante") || "Não informado";
-    const modelo = card.getAttribute("data-modelo") || "Não informado";
-    const ano = card.getAttribute("data-ano") || "0";
-    const preco = card.getAttribute("data-preco") || "0";
-    const km = card.getAttribute("data-km") || "0";
+        stockSection.appendChild(stockCard);
 
-    // Cria a query string garantindo que todos os valores são strings
-    const params = new URLSearchParams({
-      fabricante: fabricante,
-      modelo: modelo,
-      ano: ano,
-      preco: preco,
-      km: km
+        // 🔥 **Evento do botão de WhatsApp colocado DENTRO do loop, onde `stockCard` existe**
+        const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
+        whatsappBtn.addEventListener("click", function () {
+            const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} KM.`;
+            const numeroWhatsapp = "5511999999999"; // Ajuste para o número correto
+            const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
+            window.open(urlWhatsapp, "_blank");
+        });
     });
 
-    console.log("Parâmetros gerados:", params.toString());
-    alert("Redirecionando com:\n" + params.toString());
+    // 🔥 **Evento delegado para capturar cliques no botão de financiamento**
+    document.addEventListener("click", function (event) {
+        if (event.target.classList.contains("financiamento-btn")) {
+            event.preventDefault();
 
-    // Ajuste o caminho conforme a estrutura do seu projeto.
-    window.location.href = "../financiamento/financiamento.html?" + params.toString();
-  });
+            const stockCard = event.target.closest(".stock-card");
+            if (!stockCard) {
+                console.error("❌ `stockCard` não encontrado! O botão pode estar fora da estrutura correta.");
+                return;
+            }
 
-  // Configuração do botão de WhatsApp (se necessário)
-  const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
-  whatsappBtn.addEventListener("click", function () {
-      const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} KM.`;
-      const numeroWhatsapp = "5511999999999"; // Ajuste para o número correto
-      const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
-      window.open(urlWhatsapp, "_blank");
-  });
+            const fabricante = stockCard.dataset.fabricante || "Não informado";
+            const modelo = stockCard.dataset.modelo || "Não informado";
+            const ano = stockCard.dataset.ano || "0";
+            const preco = stockCard.dataset.preco ? parseFloat(stockCard.dataset.preco) : 0;
+            const km = stockCard.dataset.km || "Não informado";
 
-});
+            console.log("✅ Atributos capturados antes de gerar a URL:", { fabricante, modelo, ano, preco, km });
 
+            if (!fabricante || !modelo || !ano || !preco || !km) {
+                console.error("❌ Algum valor está `undefined`! Verifique se os atributos foram corretamente atribuídos.");
+                return;
+            }
+
+            const urlFinal = new URL("./financiamento.html", window.location.origin);
+            urlFinal.searchParams.set("fabricante", fabricante);
+            urlFinal.searchParams.set("modelo", modelo);
+            urlFinal.searchParams.set("ano", ano);
+            urlFinal.searchParams.set("preco", preco);
+            urlFinal.searchParams.set("km", km);
+
+            console.log("✅ URL final gerada:", urlFinal.toString());
+
+            alert(`URL gerada antes do redirecionamento: ${urlFinal.toString()}`);
+
+            window.location.assign(urlFinal.toString());
+        }
+    });
 }
+
+// 🔥 **Garante que o estoque seja carregado antes de adicionar os eventos**
+document.addEventListener("DOMContentLoaded", carregarEstoque);
+
 
 // Evento de cadastro de veículos
 cadastrarBtn.addEventListener("click", function () {
