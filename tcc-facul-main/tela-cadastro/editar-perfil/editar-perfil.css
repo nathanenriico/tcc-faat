@@ -28,8 +28,6 @@ body {
     background-color: #d4462c;
 }
 
-
-
 .navbar h1 {
     font-size: 24px;
     margin: 0;
@@ -81,9 +79,10 @@ body {
     border-radius: 50%;
     width: 100px;
     height: 100px;
-    object-fit: cover;
+    object-fit: contain;
     margin-bottom: 10px;
 }
+
 
 #uploadBtn {
     background-color: #444;
@@ -150,6 +149,8 @@ body {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box; /* Garante que o padding não exceda o tamanho */
+    flex-grow: 1; /* Faz o campo de senha ocupar o máximo de espaço */
+
 }
 
 .password-container {
@@ -159,57 +160,89 @@ body {
 }
 
 .toggle-password {
-    position: absolute;
-    right: 10px;
+    margin-left: 10px; /* Ajusta a posição corretamente */
     background: none;
     border: none;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
 }
 
+
+/* Popup estilizado */
 .popup {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    background-color: #ffffff; /* Fundo branco */
-    padding: 20px 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para destaque */
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 400px;
+    max-width: 90%;
+    background: linear-gradient(135deg, #ffffff, #f7f7f7);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    padding: 30px 40px;
     text-align: center;
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
-  }
-  
-  .popup.show {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.popup.show {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, -50%) scale(1);
-  }
-  
-  .popup h3 {
-    margin-bottom: 15px;
-    font-size: 18px;
-    color: #333; /* Texto escuro */
-    font-weight: bold;
-  }
-  
-  .popup button {
-    padding: 10px 20px;
+}
+
+.popup h3 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
+}
+
+.popup p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.popup button {
+    padding: 12px 24px;
     border: none;
-    background-color: #5A4FCF; /* Roxo do botão */
-    color: white;
-    border-radius: 5px;
-    font-size: 14px;
+    background: linear-gradient(135deg, #5A4FCF, #4a3ebf);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
-  }
-  
-  .popup button:hover {
-    background-color: #4a3ebf; /* Cor mais escura ao passar o mouse */
-  }  
-  
+    transition: background 0.3s ease;
+}
+
+.popup button:hover {
+    background: linear-gradient(135deg, #4a3ebf, #5A4FCF);
+}
+
+.ok-btn {
+    padding: 12px 24px; /* Define o espaçamento interno */
+    border: none; /* Remove borda padrão */
+    background: linear-gradient(135deg, #5A4FCF, #4a3ebf); /* Fundo com gradiente */
+    color: #fff; /* Cor do texto */
+    border-radius: 8px; /* Bordas arredondadas */
+    font-size: 16px; 
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidade */
+    transition: transform 0.2s ease, background 0.3s ease; /* Animação para hover */
+}
+
+.ok-btn:hover {
+    transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+    background: linear-gradient(135deg, #4a3ebf, #5A4FCF); /* Inverte o gradiente para dar efeito */
+}
+
+.ok-btn:active {
+    transform: translateY(0); /* Reseta o efeito de clique */
+}
+
 
 /* Footer */
 .footer {

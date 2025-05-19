@@ -434,20 +434,26 @@ button.whatsapp-btn:hover {
 
 
 /* CSS para o botão de financiamento */
-button.financiamento-btn {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.financiamento-btn {
+  display: inline-block;             /* Trata o link como um bloco inline */
+  padding: 10px 20px;                 /* Espaçamento interno */
+  background: linear-gradient(135deg, #000000, #4a3ebf); /* Fundo com gradiente */
+  color: #fff;                        /* Cor do texto */
+  font-size: 16px;                    /* Tamanho da fonte */
+  font-weight: bold;                  /* Texto em negrito */
+  text-align: center;                 /* Alinha o texto no centro */
+  text-decoration: none;              /* Remove o sublinhado */
+  border: none;                       /* Remove bordas */
+  border-radius: 5px;                 /* Bordas arredondadas */
+  cursor: pointer;                    /* Cursor pointer para indicar interatividade */
+  transition: background 0.3s ease, transform 0.2s ease; /* Transições suaves */
 }
 
-button.financiamento-btn:hover {
-  background-color: #45a049;
+.financiamento-btn:hover {
+  background: linear-gradient(135deg, #4a3ebf, #5A4FCF); /* Efeito hover invertendo o gradiente */
+  transform: translateY(-2px);                            /* Leve elevação */
 }
+
 
 .button-container {
   display: flex;

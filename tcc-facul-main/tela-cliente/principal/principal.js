@@ -137,23 +137,25 @@ async function carregarCarrosTelaCliente() {
   </div>
 `;
 
-    stockCard.innerHTML = `
-      ${carouselHTML}
-      <h3>${carro.fabricante} ${carro.modelo}</h3>
-      <p><strong>Ano:</strong> ${carro.ano}</p>
-      <p><strong>KM:</strong> ${carro.km}</p>
-<p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
-      <p><strong>Dono(s):</strong> ${ carro.quantidade_dono ?? carro.quantidadeDono ?? 0 }</p>
-      <p><strong>Descrição:</strong> ${carro.descricao}</p>
-      <div class="button-container">
-<button class="whatsapp-btn" aria-label="Contato WhatsApp">
-  <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
-</button>
-          <button class="financiamento-btn">Simular Financiamento</button>
-      </div>
-    `;
+   stockCard.innerHTML = `
+  ${carouselHTML}
+  <h3>${carro.fabricante} ${carro.modelo}</h3>
+  <p><strong>Ano:</strong> ${carro.ano}</p>
+  <p><strong>KM:</strong> ${carro.km}</p>
+  <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
+  <p><strong>Dono(s):</strong> ${carro.quantidade_dono ?? carro.quantidadeDono ?? 0}</p>
+  <p><strong>Descrição:</strong> ${carro.descricao}</p>
+  <div class="button-container">
+    <button class="whatsapp-btn" aria-label="Contato WhatsApp">
+      <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
+    </button>
+    <a href="/tcc-facul-main/tela-cliente/financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
+      Simular Financiamento
+    </a>
+  </div>
+`;
+carrosContainer.appendChild(stockCard);
 
-    carrosContainer.appendChild(stockCard);
 
     // Evento para o botão de WhatsApp
     const whatsappBtn = stockCard.querySelector(".whatsapp-btn");

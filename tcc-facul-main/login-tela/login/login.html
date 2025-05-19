@@ -28,7 +28,7 @@
                 <div class="input-box">
                   <i class="fas fa-key"></i>
                   <input type="password" placeholder="Senha" id="senha" required>
-                  <span class="toggle-password" onclick="togglePassword()">🔒</span>
+                  <span class="toggle-password" style="cursor: pointer;">🔒</span>                
                 </div>
           
                 <div class="remember">
@@ -51,13 +51,13 @@
 
     <div class="popup" id="popupErro">
       <h3>Email ou senha incorretos. Tente novamente.</h3>
-      <button onclick="fecharPopupErro()">OK</button>
     </div>
     
     <div class="popup" id="popupSucesso">
       <h3>✅ Login realizado com sucesso!</h3>
-      <button onclick="fecharPopup()">OK</button>
+      <button id="okBtn" onclick="fecharPopup()">OK</button>    
     </div>
     
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </body>
 </html>
