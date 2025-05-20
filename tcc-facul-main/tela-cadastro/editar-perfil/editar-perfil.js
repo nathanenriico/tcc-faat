@@ -37,53 +37,78 @@ function fecharPopupAviso() {
 // --------------------------------------------------------------------
 // Função para criar conta e tentar o auto-login
 async function criarConta() {
-  console.log("✅ Botão de criar conta clicado!");
-  const email = document.getElementById("email").value.trim();
-  const senha = document.getElementById("password").value.trim();
+    console.log("✅ Iniciando criação de conta...");
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("password").value.trim();
+    const nome = document.getElementById("nome").value.trim(); // Novo campo
 
-  // Substituindo alert() por nosso popup personalizado
-  if (!email || senha.length < 6) {
-    mostrarPopupAviso("O e-mail informado é inválido ou a senha é muito curta (mínimo 6 caracteres).");
-    return;
-  }
+    if (!email || senha.length < 6 || !nome) {
+        mostrarPopupAviso("Preencha corretamente todos os campos.");
+        return;
+    }
 
-  // Criação de conta via Supabase
-  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-    email: email,
-    password: senha
-  });
+    // Criando usuário no Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: senha
+    });
 
-  if (signUpError) {
-    console.error("❌ Erro ao criar conta:", signUpError.message);
-    mostrarPopupAviso("Erro ao criar conta: " + signUpError.message);
-    return;
-  }
-  
-  console.log("✅ Conta criada com sucesso!", signUpData);
+    if (error) {
+        console.error("❌ Erro ao criar conta:", error.message);
+        mostrarPopupAviso("Erro ao criar conta: " + error.message);
+        return;
+    }
 
-  // Verifica se é necessário confirmar o email (caso o Supabase esteja configurado para isso)
-  if (!signUpData.user.confirmed_at) {
-    mostrarPopupAviso("Conta criada com sucesso! Por favor, confirme seu email antes de efetuar login.");
-    return;
-  }
+    console.log("✅ Usuário registrado!", data);
 
-  // Tenta o auto-login somente se o usuário estiver confirmado
-  const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: senha
-  });
-  
-  if (loginError) {
-    console.error("❌ Erro ao fazer login:", loginError.message);
-    mostrarPopupAviso("Conta criada, mas não foi possível fazer login: " + loginError.message);
-  } else {
-    console.log("✅ Login efetuado com sucesso!", loginData);
-    window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
-  }
+    // Criando perfil de segurança vinculado ao usuário
+    const { data: perfilData, error: perfilError } = await supabase
+        .from("perfil_segurança")
+        .insert([{ id: data.user.id, nome: nome, tipo_acesso: "Usuário padrão" }]);
+
+    if (perfilError) {
+        console.error("❌ Erro ao criar perfil:", perfilError.message);
+    } else {
+        console.log("✅ Perfil de segurança criado!", perfilData);
+    }
 }
 
-// Associa o evento de clique no botão "Criar Conta"
-document.getElementById("criarContaBtn").addEventListener("click", criarConta);
+async function login() {
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
+
+    if (!email || senha.length < 6) {
+        console.error("❌ Email ou senha inválidos.");
+        mostrarPopupAviso("Email ou senha inválidos.");
+        return;
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: senha,
+    });
+
+    if (error) {
+        console.error("❌ Erro ao autenticar:", error.message);
+        mostrarPopupAviso("Erro ao autenticar: " + error.message);
+        return;
+    }
+
+    console.log("✅ Login realizado!", data);
+
+    // Buscar perfil vinculado ao usuário autenticado
+    const { data: perfilData, error: perfilError } = await supabase
+        .from("perfil_segurança")
+        .select("*")
+        .eq("id", data.user.id)
+        .single();
+
+    if (perfilError) {
+        console.error("❌ Erro ao buscar perfil:", perfilError.message);
+    } else {
+        console.log("✅ Perfil carregado:", perfilData);
+    }
+}
 
 // --------------------------------------------------------------------
 // Código do perfil e atualização (já existente)

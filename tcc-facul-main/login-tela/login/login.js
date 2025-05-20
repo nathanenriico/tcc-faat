@@ -12,49 +12,61 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("✅ Página de login carregada!");
 
   // --- Formulário de login combinado ---
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async function (event) {
-      event.preventDefault();
-      
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      const lembrarCheckbox = document.getElementById("lembrar");
-      
-      // Se o checkbox "lembrar" estiver marcado, usa a validação local;
-      // caso contrário, utiliza a autenticação com Supabase.
-      if (lembrarCheckbox && lembrarCheckbox.checked) {
-        const emailSalvo = localStorage.getItem("email");
-        const senhaSalva = localStorage.getItem("senha");
-        if (!emailSalvo || !senhaSalva) {
-          mostrarPopup(); // Informa que não há conta cadastrada
-        } else if (email === emailSalvo && senha === senhaSalva) {
-          mostrarPopupSucesso();
-        } else {
-          mostrarPopupErro();
-        }
-      } else {
-        if (!email || !senha) {
-          alert("Preencha todos os campos!");
-          return;
-        }
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: senha
-        });
-        if (error) {
-          console.error("❌ Erro ao autenticar:", error.message);
-          mostrarPopupErro();
-        } else {
-          console.log("✅ Login realizado!", data);
-          mostrarPopupSucesso();
-          setTimeout(() => {
-            window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
-          }, 2000);
-        }
+ const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    console.log("Email digitado:", email);
+    console.log("Senha digitada:", senha);
+
+    if (!email || !senha) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    try {
+      // Login com Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: senha,
+      });
+
+      if (authError) {
+        console.error("❌ Erro ao autenticar:", authError.message);
+        mostrarPopupErro(); // Ou alert(authError.message);
+        return;
       }
-    });
-  }
+
+      console.log("✅ Login realizado com sucesso!", authData);
+
+      // Buscar perfil adicional na tabela "perfil de segurança"
+      const { data: perfil, error: perfilError } = await supabase
+        .from("perfil de segurança")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (perfilError) {
+        console.warn("⚠️ Login feito, mas não achou perfil:", perfilError.message);
+      } else {
+        console.log("✅ Perfil encontrado:", perfil);
+        localStorage.setItem("email", perfil.email);
+      }
+
+      mostrarPopupSucesso();
+      setTimeout(() => {
+        window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
+      }, 2000);
+    } catch (err) {
+      console.error("❌ Erro inesperado:", err.message);
+    }
+  });
+}
 
   // --- Evento de clique no link "Esqueceu ou Alterar Senha?" (segundo código) ---
   const alterarSenhaLink = document.getElementById("alterarSenhaLink");
