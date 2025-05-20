@@ -214,7 +214,7 @@ function mostrarPopupAlterarSenha() {
     const emailInputValue = document.getElementById("emailAlteracao").value.trim().toLowerCase();
 
     // Email real do dono (certifique-se de que está tudo em minúsculas)
-    const ownerEmail = "nicholasqueiroz2517@gmail.com".toLowerCase();
+    const ownerEmail = "enrico13ita@gmail.com".toLowerCase();
 
     if (emailInputValue === ownerEmail) {
       // Gera um código de 6 dígitos

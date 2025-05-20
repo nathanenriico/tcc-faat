@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     modelo: params.get("modelo"),
     ano: params.get("ano"),
     preco: params.get("preco"),
-    km: params.get("km")
+    km: params.get("km"),
   });
 
   function atualizarElemento(id, valor) {
@@ -27,20 +27,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  atualizarElemento("fabricante", params.get("fabricante") || "Não informado");
-  atualizarElemento("modelo", params.get("modelo") || "Não informado");
-  atualizarElemento("ano", params.get("ano") || "Não informado");
-  atualizarElemento("preco", `R$ ${parseFloat(params.get("preco") || 0).toLocaleString("pt-BR")}`);
-  atualizarElemento("km", params.get("km") || "Não informado");
+// Atualizando informações do veículo
+atualizarElemento("fabricante", params.get("fabricante") || "Não informado");
+atualizarElemento("modelo", params.get("modelo") || "Não informado");
+atualizarElemento("ano", params.get("ano") || "Não informado");
+
+// Adicione a conversão do km aqui 👇
+const km = parseInt(params.get("km")) || 0;
+atualizarElemento("km", km.toLocaleString("pt-BR"));
+
+// Formatação do preço
+const preco = parseFloat(params.get("preco")) || 0;
+atualizarElemento("preco", `R$ ${preco.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
+
 
   // Simulação de financiamento
-  document.getElementById("calcular").addEventListener("click", function () {
+document.getElementById("calcular").addEventListener("click", function () {
     const entrada = Number(document.getElementById("entrada").value) || 0;
     const parcelas = Number(document.getElementById("parcelas").value);
     const preco = parseFloat(params.get("preco")) || 0;
 
-    // Atualiza o valor da entrada no formato Reais
-atualizarElemento("entradaValor", `R$ ${entrada.toLocaleString("pt-BR")}`);
+    // **Atualiza o próprio campo de entrada**
+    document.getElementById("entrada").value = entrada.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
     if (entrada >= preco) {
       alert("Entrada não pode ser maior ou igual ao valor do carro.");
@@ -53,8 +61,9 @@ atualizarElemento("entradaValor", `R$ ${entrada.toLocaleString("pt-BR")}`);
     const totalPagar = valorParcela * parcelas;
     const totalJuros = totalPagar - valorFinanciado;
 
-    atualizarElemento("valorParcela", `R$ ${valorParcela.toLocaleString("pt-BR")}`);
-    atualizarElemento("totalPagar", `R$ ${totalPagar.toLocaleString("pt-BR")}`);
-    atualizarElemento("totalJuros", `R$ ${totalJuros.toLocaleString("pt-BR")}`);
-  });
+    atualizarElemento("valorParcela", `R$ ${valorParcela.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
+    atualizarElemento("totalPagar", `R$ ${totalPagar.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
+    atualizarElemento("totalJuros", `R$ ${totalJuros.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
 });
+});
+
