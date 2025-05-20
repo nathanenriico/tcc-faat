@@ -12,24 +12,34 @@ function mostrarPopupAviso(mensagem, redirecionarPara = null) {
   const popupAviso = document.createElement("div");
   popupAviso.className = "popup";
   popupAviso.id = "popupAviso";
+
+  // Cria o botão separadamente e adiciona um listener de clique
+  const botao = document.createElement("button");
+  botao.textContent = "OK";
+  botao.addEventListener("click", () => fecharPopupAviso(redirecionarPara));
+
   popupAviso.innerHTML = `
     <h3>Aviso!</h3>
     <p>${mensagem}</p>
-    <button onclick="fecharPopupAviso(); ${redirecionarPara ? `window.location.href='${redirecionarPara}';` : ''}">OK</button>
   `;
+  popupAviso.appendChild(botao);
   document.body.appendChild(popupAviso);
+
   setTimeout(() => {
     popupAviso.classList.add("show");
   }, 10);
 }
 
 
-function fecharPopupAviso() {
+function fecharPopupAviso(redirecionarPara = null) {
   const popupAviso = document.getElementById("popupAviso");
   if (popupAviso) {
     popupAviso.classList.remove("show");
     setTimeout(() => {
       document.body.removeChild(popupAviso);
+      if (redirecionarPara) {
+        window.location.href = redirecionarPara;
+      }
     }, 300);
   }
 }
@@ -37,78 +47,53 @@ function fecharPopupAviso() {
 // --------------------------------------------------------------------
 // Função para criar conta e tentar o auto-login
 async function criarConta() {
-    console.log("✅ Iniciando criação de conta...");
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("password").value.trim();
-    const nome = document.getElementById("nome").value.trim(); // Novo campo
+  console.log("✅ Botão de criar conta clicado!");
+  const email = document.getElementById("email").value.trim();
+  const senha = document.getElementById("password").value.trim();
 
-    if (!email || senha.length < 6 || !nome) {
-        mostrarPopupAviso("Preencha corretamente todos os campos.");
-        return;
-    }
+  // Substituindo alert() por nosso popup personalizado
+  if (!email || senha.length < 6) {
+    mostrarPopupAviso("O e-mail informado é inválido ou a senha é muito curta (mínimo 6 caracteres).");
+    return;
+  }
 
-    // Criando usuário no Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: senha
-    });
+  // Criação de conta via Supabase
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+    email: email,
+    password: senha
+  });
 
-    if (error) {
-        console.error("❌ Erro ao criar conta:", error.message);
-        mostrarPopupAviso("Erro ao criar conta: " + error.message);
-        return;
-    }
+  if (signUpError) {
+    console.error("❌ Erro ao criar conta:", signUpError.message);
+    mostrarPopupAviso("Erro ao criar conta: " + signUpError.message);
+    return;
+  }
+  
+  console.log("✅ Conta criada com sucesso!", signUpData);
 
-    console.log("✅ Usuário registrado!", data);
+  // Verifica se é necessário confirmar o email (caso o Supabase esteja configurado para isso)
+  if (!signUpData.user.confirmed_at) {
+    mostrarPopupAviso("Conta criada com sucesso! Por favor, confirme seu email antes de efetuar login.");
+    return;
+  }
 
-    // Criando perfil de segurança vinculado ao usuário
-    const { data: perfilData, error: perfilError } = await supabase
-        .from("perfil_segurança")
-        .insert([{ id: data.user.id, nome: nome, tipo_acesso: "Usuário padrão" }]);
-
-    if (perfilError) {
-        console.error("❌ Erro ao criar perfil:", perfilError.message);
-    } else {
-        console.log("✅ Perfil de segurança criado!", perfilData);
-    }
+  // Tenta o auto-login somente se o usuário estiver confirmado
+  const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: senha
+  });
+  
+  if (loginError) {
+    console.error("❌ Erro ao fazer login:", loginError.message);
+    mostrarPopupAviso("Conta criada, mas não foi possível fazer login: " + loginError.message);
+  } else {
+    console.log("✅ Login efetuado com sucesso!", loginData);
+    window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
+  }
 }
 
-async function login() {
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
-
-    if (!email || senha.length < 6) {
-        console.error("❌ Email ou senha inválidos.");
-        mostrarPopupAviso("Email ou senha inválidos.");
-        return;
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password: senha,
-    });
-
-    if (error) {
-        console.error("❌ Erro ao autenticar:", error.message);
-        mostrarPopupAviso("Erro ao autenticar: " + error.message);
-        return;
-    }
-
-    console.log("✅ Login realizado!", data);
-
-    // Buscar perfil vinculado ao usuário autenticado
-    const { data: perfilData, error: perfilError } = await supabase
-        .from("perfil_segurança")
-        .select("*")
-        .eq("id", data.user.id)
-        .single();
-
-    if (perfilError) {
-        console.error("❌ Erro ao buscar perfil:", perfilError.message);
-    } else {
-        console.log("✅ Perfil carregado:", perfilData);
-    }
-}
+// Associa o evento de clique no botão "Criar Conta"
+document.getElementById("criarContaBtn").addEventListener("click", criarConta);
 
 // --------------------------------------------------------------------
 // Código do perfil e atualização (já existente)
@@ -149,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     <h3>Aviso!</h3>
     <p>A nova senha não pode ser igual à anterior.</p>
     <a href="./editar-perfil.html" class="ok-btn">Clique aqui para redefinir sua senha</a>
-    <button onclick="fecharPopupSenhaIgual()">OK</button>
+    <button onclick="window.location.href='./editar-perfil.html';">OK</button>
   `;
   document.body.appendChild(popupAviso);
   setTimeout(() => {
@@ -182,7 +167,7 @@ profileForm.addEventListener("submit", async function (e) {
   }
 
   if (novaSenha.length < 6) {
-    mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).");
+    mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).", "./editar-perfil.html");
     return;
   }
 
@@ -192,7 +177,7 @@ profileForm.addEventListener("submit", async function (e) {
     return;
   }
 
-  mostrarPopupAviso("Perfil atualizado com sucesso!");
+mostrarPopupAviso("Perfil atualizado com sucesso!", "/tcc-facul-main/login-tela/login/login.html");
 });
 });
 
