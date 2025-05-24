@@ -203,7 +203,7 @@ async function salvarCarro(fabricante, modelo, ano, quantidadeDono, km, preco, d
         const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
         whatsappBtn.addEventListener("click", function () {
             const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} KM.`;
-            const numeroWhatsapp = "5511999999999"; // Ajuste para o número correto
+            const numeroWhatsapp = "5511985162224"; // Ajuste para o número correto
             const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
             window.open(urlWhatsapp, "_blank");
         });

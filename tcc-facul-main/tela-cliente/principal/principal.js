@@ -149,20 +149,28 @@ async function carregarCarrosTelaCliente() {
     <button class="whatsapp-btn" aria-label="Contato WhatsApp">
       <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
     </button>
-    <a href="/tcc-facul-main/tela-cliente/financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
+    <a href="/tcc-faat/tcc-facul-main/tela-cliente/financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
       Simular Financiamento
     </a>
   </div>
 `;
-carrosContainer.appendChild(stockCard);
+    carrosContainer.appendChild(stockCard);
 
+    // Adicionar evento de clique na imagem para abrir o modal
+    const carImage = stockCard.querySelector('.car-image img');
+    if (carImage) {
+      carImage.style.cursor = 'pointer';
+      carImage.addEventListener('click', function() {
+        openModal(this.src, [this.src], 0);
+      });
+    }
 
     // Evento para o botão de WhatsApp
     const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
     if (whatsappBtn) {
       whatsappBtn.addEventListener("click", function () {
         const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} km.`;
-        const numeroWhatsapp = "5511999999999"; // Substitua pelo número correto
+        const numeroWhatsapp = "5511985162224"; // Substitua pelo número correto
         const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
         window.open(urlWhatsapp, "_blank");
       });
@@ -197,6 +205,14 @@ carrosContainer.appendChild(stockCard);
         currentIndex = (currentIndex === imagensArray.length - 1) ? 0 : currentIndex + 1;
         updateImage();
       });
+      
+      // Adicione este código aqui para o clique na imagem do carrossel
+      if (carouselImage) {
+        carouselImage.style.cursor = 'pointer';
+        carouselImage.addEventListener('click', function() {
+          openModal(this.src, imagensArray, currentIndex);
+        });
+      }
     }
   });
 }
@@ -223,6 +239,7 @@ async function filtrarCarrosPorModelo(modelo) {
     console.error("❌ Elemento .carros-container não encontrado!");
     return;
   }
+
   carrosContainer.innerHTML = "";
 
   if (carrosFiltrados.length === 0) {
@@ -235,7 +252,7 @@ async function filtrarCarrosPorModelo(modelo) {
     stockCard.classList.add("car-card");
 
     const imagensArray = extrairImagens(carro.imagens);
-  let carouselHTML = imagensArray.length > 1 ? `
+    let carouselHTML = imagensArray.length > 1 ? `
   <div class="carousel-container" data-index="0">
       <img class="carousel-image" src="${imagensArray[0]}" alt="${carro.modelo}">
       <button class="carousel-prev">&#9664;</button>
@@ -252,18 +269,26 @@ async function filtrarCarrosPorModelo(modelo) {
       <h3>${carro.fabricante} ${carro.modelo}</h3>
       <p><strong>Ano:</strong> ${carro.ano}</p>
       <p><strong>KM:</strong> ${carro.km}</p>
-<p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
-      <p><strong>Dono(s):</strong> ${ carro.quantidade_dono ?? carro.quantidadeDono ?? 0 }</p>
+      <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
+      <p><strong>Dono(s):</strong> ${carro.quantidade_dono ?? carro.quantidadeDono ?? 0}</p>
       <p><strong>Descrição:</strong> ${carro.descricao}</p>
       <div class="button-container">
-<button class="whatsapp-btn" aria-label="Contato WhatsApp">
-  <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
-</button>
-</button>
-          <button class="financiamento-btn">Simular Financiamento</button>
+        <button class="whatsapp-btn" aria-label="Contato WhatsApp">
+          <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
+        </button>
+        <button class="financiamento-btn">Simular Financiamento</button>
       </div>
     `;
     carrosContainer.appendChild(stockCard);
+    
+    // Adicionar evento de clique na imagem para abrir o modal
+    const carImage = stockCard.querySelector('.car-image img');
+    if (carImage) {
+      carImage.style.cursor = 'pointer';
+      carImage.addEventListener('click', function() {
+        openModal(this.src, [this.src], 0);
+      });
+    }
 
     // Eventos dos botões para o carro filtrado
     const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
@@ -275,6 +300,7 @@ async function filtrarCarrosPorModelo(modelo) {
         window.open(urlWhatsapp, "_blank");
       });
     }
+    
     const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
     if (financiamentoBtn) {
       financiamentoBtn.addEventListener("click", function () {
@@ -302,6 +328,14 @@ async function filtrarCarrosPorModelo(modelo) {
         currentIndex = (currentIndex === imagensArray.length - 1) ? 0 : currentIndex + 1;
         updateImage();
       });
+      
+      // Adicione evento de clique na imagem do carrossel
+      if (carouselImage) {
+        carouselImage.style.cursor = 'pointer';
+        carouselImage.addEventListener('click', function() {
+          openModal(this.src, imagensArray, currentIndex);
+        });
+      }
     }
   });
 }
@@ -311,3 +345,56 @@ document.addEventListener("DOMContentLoaded", async function () {
   await carregarCategorias();
   await carregarCarrosTelaCliente();
 });
+
+// Função para abrir o modal com a imagem ampliada e navegação
+function openModal(imgSrc, allImages = null, currentIndex = 0) {
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const closeBtn = document.querySelector('.close');
+  
+  if (modal && modalImg) {
+    modal.style.display = "block";
+    modalImg.src = imgSrc;
+    
+    // Configurar evento de fechamento ao clicar no X
+    if (closeBtn) {
+      closeBtn.onclick = function() {
+        modal.style.display = "none";
+      };
+    }
+    
+    // Configurar evento de fechamento ao clicar fora da imagem
+    modal.onclick = function(e) {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+    
+    // Se temos múltiplas imagens, configuramos a navegação
+    const prevBtn = document.querySelector('.modal-prev');
+    const nextBtn = document.querySelector('.modal-next');
+    
+    if (allImages && allImages.length > 1 && prevBtn && nextBtn) {
+      // Mostrar os botões de navegação
+      prevBtn.style.display = 'block';
+      nextBtn.style.display = 'block';
+      
+      // Configurar os eventos de clique
+      prevBtn.onclick = function(e) {
+        e.stopPropagation();
+        currentIndex = (currentIndex === 0) ? allImages.length - 1 : currentIndex - 1;
+        modalImg.src = allImages[currentIndex];
+      };
+      
+      nextBtn.onclick = function(e) {
+        e.stopPropagation();
+        currentIndex = (currentIndex === allImages.length - 1) ? 0 : currentIndex + 1;
+        modalImg.src = allImages[currentIndex];
+      };
+    } else if (prevBtn && nextBtn) {
+      // Esconder os botões se não houver múltiplas imagens
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
+  }
+}

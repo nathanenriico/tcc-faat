@@ -60,7 +60,7 @@ if (loginForm) {
 
       mostrarPopupSucesso();
       setTimeout(() => {
-        window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
+        window.location.href = "/tcc-faat/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
       }, 2000);
     } catch (err) {
       console.error("❌ Erro inesperado:", err.message);
