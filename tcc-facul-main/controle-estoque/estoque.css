@@ -1,0 +1,237 @@
+/* 🔥 Estilização Global */
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #222;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 🔹 Botões */
+.voltar-container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px;
+}
+
+.btn-voltar {
+    background-color: #5A4FCF;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.btn-voltar:hover {
+    background-color: #4937b4;
+}
+
+/* 🔹 Layout do Estoque */
+.stock-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 25px;
+    justify-content: center;
+}
+
+/* 🔥 Estilização dos Cards */
+.stock-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    padding: 20px;
+    margin: 15px;
+    width: 360px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.stock-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.stock-card p {
+    font-size: 15px;
+    margin: 5px 0;
+    color: #666;
+    word-wrap: break-word;      /* Força a quebra de linha em palavras longas */
+    overflow-wrap: break-word;  /* Garante a quebra de linha em navegadores modernos */
+    white-space: normal;        /* Evita que o texto fique em uma única linha */
+}
+
+
+/* 🔹 Slider dentro do Card */
+.slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+/* 🔹 Slider dentro do Card */
+.slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    width: 100%;
+}
+
+/* 🔥 Imagem do Slider */
+.slider-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* 🔹 Botões de Navegação 🔹 */
+.slider-prev, .slider-next {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: opacity 0.3s;
+    opacity: 0.7;
+}
+
+.slider-prev { left: 5px; }
+.slider-next { right: 5px; }
+
+.slider-prev:hover,
+.slider-next:hover {
+    opacity: 1;
+}
+
+/* 🔹 Títulos e Informações */
+.stock-card h3 {
+    font-size: 22px;
+    margin: 10px 0;
+    color: #333;
+    font-weight: bold;
+}
+
+.stock-card p {
+    font-size: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+/* 🔹 Títulos e Informações */
+.stock-card h3 {
+    font-size: 22px;
+    margin: 10px 0;
+    color: #333;
+    font-weight: bold;
+}
+
+.stock-card p {
+    font-size: 15px;
+    margin: 5px 0;
+    color: #666;
+}
+
+/* 🔥 Botões */
+.delete-btn, .add-btn {
+    flex: 1; /* Para garantir tamanhos iguais */
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.delete-btn {
+    background: #ff3e3e;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #cc2929;
+}
+
+.add-btn {
+    background: #28a745;
+    color: white;
+}
+
+.add-btn:hover {
+    background: #218838;
+}
+
+.car-image {
+    width: 100%; /* Ocupa toda a largura do contêiner */
+    height: 200px; /* Define uma altura fixa para manter um layout uniforme */
+    display: flex; /* Centraliza o conteúdo */
+    justify-content: center; /* Alinha horizontalmente */
+    align-items: center; /* Alinha verticalmente */
+    overflow: hidden; /* Garante que o excesso da imagem não apareça */
+    border-radius: 8px; /* Mantém bordas arredondadas */
+}
+
+.car-image img {
+    width: auto; /* Permite ajustar a largura proporcional */
+    height: 100%; /* Faz a imagem ocupar a altura do contêiner sem distorção */
+    object-fit: cover; /* Preenche o espaço mantendo a proporção, cortando apenas o necessário */
+    display: block;
+}
+
+.category-image {
+    width: 80px; /* Largura fixa */
+    height: 80px; /* Altura fixa */
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    overflow: hidden; /* Esconde partes excedentes */
+    border-radius: 8px; /* Mantém bordas arredondadas */
+    background-color: #f9f9f9; /* Adiciona fundo claro */
+}
+
+.category-image img {
+    max-width: 100%; /* Garante que a largura respeite o contêiner */
+    max-height: 100%; /* Garante que a altura respeite o contêiner */
+    object-fit: contain; /* Mantém proporções sem cortar */
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .stock-card {
+        width: 100%;
+    }
+
+    .slider-image {
+        max-height: 150px;
+    }
+}
