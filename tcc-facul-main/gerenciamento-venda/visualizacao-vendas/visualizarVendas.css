@@ -69,6 +69,37 @@ body {
     color: #333;
 }
 
+/* Filtro de Vendas */
+.sales-filter {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.sales-filter h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: #007BFF;
+}
+
+.filter-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.month-filter {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    min-width: 150px;
+}
+
 /* Detalhes de Vendas */
 .sales-details {
     background-color: #ffffff;
@@ -82,6 +113,14 @@ body {
     font-size: 20px;
     color: #007BFF;
     text-align: center;
+}
+
+.sales-details > p {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #28a745;
 }
 
 .sales-details div {
@@ -98,6 +137,17 @@ body {
 .sales-details p {
     font-size: 16px;
     color: #333;
+}
+
+/* Estilo para as linhas de vendas */
+.sale-row {
+    border-bottom: 1px solid #eee;
+    padding: 15px 10px;
+    margin-bottom: 10px;
+}
+
+.sale-row:last-child {
+    border-bottom: none;
 }
 
 /* Botões */
@@ -173,12 +223,12 @@ button:hover {
         gap: 15px;
     }
 
-    .sales-summary, .sales-details {
+    .sales-summary, .sales-details, .sales-filter {
         padding: 15px;
         margin: 10px auto;
     }
 
-    .sales-summary h2, .sales-details h3 {
+    .sales-summary h2, .sales-details h3, .sales-filter h3 {
         font-size: 18px;
     }
 
@@ -188,6 +238,10 @@ button:hover {
 
     .sales-details h4 {
         font-size: 16px;
+    }
+
+    .filter-controls {
+        flex-direction: column;
     }
 
     button {
@@ -201,7 +255,7 @@ button:hover {
         font-size: 20px;
     }
 
-    .sales-summary h2, .sales-details h3 {
+    .sales-summary h2, .sales-details h3, .sales-filter h3 {
         font-size: 16px;
     }
 

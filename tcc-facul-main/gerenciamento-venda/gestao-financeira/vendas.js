@@ -20,59 +20,116 @@ document.addEventListener("DOMContentLoaded", function() {
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
     const totalVendasElement = document.getElementById("totalVendas");
+    const deleteSalesContent = document.getElementById("deleteSalesContent");
+    const barChartCtx = document.getElementById("barChart").getContext("2d");
+    const lineChartCtx = document.getElementById("lineChart").getContext("2d");
     
-    // Inicializar gráficos vazios
-    let barChart = null;
-    let lineChart = null;
+    // Dados locais
+    let salesData = JSON.parse(localStorage.getItem("salesData")) || [];
+    let totalVendas = salesData.reduce((sum, sale) => sum + sale.value, 0);
+    totalVendasElement.textContent = formatarMoeda(totalVendas);
     
-    // Carregar dados iniciais
+    // Inicializar gráficos
+    const barChart = new Chart(barChartCtx, {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Vendas por Modelo (R$)",
+                data: [],
+                backgroundColor: "#007BFF",
+            }],
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatarMoeda(value);
+                        }
+                    }
+                }
+            }
+        },
+    });
+
+    const lineChart = new Chart(lineChartCtx, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Tendência de Vendas (R$)",
+                data: [],
+                borderColor: "#28a745",
+                fill: false,
+            }],
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatarMoeda(value);
+                        }
+                    }
+                }
+            }
+        },
+    });
+    
+    // Carregar dados iniciais e atualizar gráficos
     carregarDados();
+    atualizarGraficos(salesData);
     
     // Evento para botão Registrar Venda
-    registerSaleBtn.onclick = function() {
+    registerSaleBtn.addEventListener("click", function() {
         console.log("Botão registrar clicado");
         // Definir a data atual como valor padrão no campo de data
         const hoje = new Date().toISOString().split('T')[0];
         document.getElementById("saleDate").value = hoje;
         saleModal.style.display = "flex";
-    };
+    });
     
     // Evento para botão Visualizar Vendas
-    viewSalesBtn.onclick = function() {
+    viewSalesBtn.addEventListener("click", function() {
         console.log("Botão visualizar clicado");
         window.location.href = "/tcc-facul-main/gerenciamento-venda/visualizacao-vendas/visualização-vendas.html";
-    };
+    });
     
     // Evento para botão Excluir Venda
-    deleteSaleBtn.onclick = function() {
+    deleteSaleBtn.addEventListener("click", function() {
         console.log("Botão excluir clicado");
         deleteModal.style.display = "flex";
         atualizarVendasExclusao();
-    };
+    });
     
     // Evento para botão Filtrar
-    filterBtn.addEventListener('click', function() {
+    filterBtn.addEventListener("click", function() {
         console.log("Botão filtrar clicado");
-        carregarDados();
+        filtrarVendas();
     });
     
     // Fechar modal de registro
-    closeBtn.onclick = function() {
+    closeBtn.addEventListener("click", function() {
         saleModal.style.display = "none";
-    };
+    });
     
     // Fechar modal de exclusão
-    closeDeleteBtn.onclick = function() {
+    closeDeleteBtn.addEventListener("click", function() {
         deleteModal.style.display = "none";
-    };
+    });
     
     // Botão voltar no modal de exclusão
-    backBtn.onclick = function() {
+    backBtn.addEventListener("click", function() {
         deleteModal.style.display = "none";
-    };
+    });
     
     // Submeter formulário de venda
-    saleForm.onsubmit = async function(e) {
+    saleForm.addEventListener("submit", function(e) {
         e.preventDefault();
         console.log("Formulário submetido");
 
@@ -88,341 +145,284 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
         
-        const { data, error } = await supabase
+        // Salvar no Supabase
+        supabase
             .from("Vendas")
-            .insert([{ modelo, valor, data_venda }]);
+            .insert([{ modelo, valor, data_venda }])
+            .then(({ data, error }) => {
+                if (error) {
+                    console.error("Erro ao registrar venda no Supabase:", error);
+                    alert("Erro ao registrar venda: " + error.message);
+                    return;
+                }
 
-        if (error) {
-            console.error("Erro ao registrar venda no Supabase:", error);
-            alert("Erro ao registrar venda: " + error.message);
-            return;
-        }
+                console.log("Venda registrada com sucesso no Supabase:", data);
+                
+                // Também salvar no localStorage
+                const saleDate = new Date(data_venda);
+                const newSale = { 
+                    model: modelo, 
+                    value: valor, 
+                    date: saleDate,
+                    id: data && data[0] ? data[0].id : Date.now() // Usar ID do Supabase ou timestamp
+                };
+                
+                salesData.push(newSale);
+                localStorage.setItem("salesData", JSON.stringify(salesData));
+                
+                // Atualizar total
+                totalVendas += valor;
+                totalVendasElement.textContent = formatarMoeda(totalVendas);
+                
+                alert("Venda registrada com sucesso!");
+                saleModal.style.display = "none";
+                document.getElementById("carModel").value = "";
+                document.getElementById("carValue").value = "";
+                document.getElementById("saleDate").value = "";
 
-        console.log("Venda registrada com sucesso:", data);
-        alert("Venda registrada com sucesso!");
-        saleModal.style.display = "none";
-        document.getElementById("carModel").value = "";
-        document.getElementById("carValue").value = "";
-        document.getElementById("saleDate").value = "";
-
-        // Atualizar popup de exclusão imediatamente
-        atualizarVendasExclusao();
-        // Recarregar dados após registrar uma nova venda
-        carregarDados();
-    };
+                // Atualizar gráficos e lista de exclusão
+                atualizarGraficos(salesData);
+                atualizarVendasExclusao();
+            })
+            .catch(err => {
+                console.error("Erro ao processar venda:", err);
+                alert("Ocorreu um erro ao processar a venda. Tente novamente.");
+            });
+    });
 
     // Função para atualizar lista de vendas para exclusão
-    async function atualizarVendasExclusao() {
-        const deleteSalesContent = document.getElementById("deleteSalesContent");
-        deleteSalesContent.innerHTML = "<p>Carregando vendas...</p>";
+    function atualizarVendasExclusao() {
+        deleteSalesContent.innerHTML = "";
 
-        const { data, error } = await supabase
-            .from("Vendas")
-            .select("id, modelo, valor, data_venda");
-
-        if (error) {
-            console.error("Erro ao carregar vendas:", error);
-            deleteSalesContent.innerHTML = "<p>Erro ao carregar vendas.</p>";
+        if (salesData.length === 0) {
+            deleteSalesContent.innerHTML = "<p>Sem vendas registradas.</p>";
             return;
         }
 
-        console.log("Vendas carregadas:", data);
+        salesData.forEach((sale, index) => {
+            const saleRow = document.createElement("div");
+            saleRow.classList.add("sale-row");
+            saleRow.innerHTML = `
+                <p><strong>Modelo:</strong> ${sale.model}</p>
+                <p><strong>Valor:</strong> ${formatarMoeda(sale.value)}</p>
+                <p><strong>Data:</strong> ${new Date(sale.date).toLocaleDateString()}</p>
+                <button class="delete-btn" data-index="${index}" data-id="${sale.id || ''}">Excluir</button>
+            `;
+            deleteSalesContent.appendChild(saleRow);
+        });
 
-        if (data.length === 0) {
-            deleteSalesContent.innerHTML = "<p>Nenhuma venda registrada.</p>";
-            return;
-        }
-
-        // Exibir vendas no modal corretamente
-        deleteSalesContent.innerHTML = data.map(sale => 
-            `<div class="sale-item">
-                <p>${sale.modelo} - ${formatarMoeda(sale.valor)} - ${formatarData(sale.data_venda)}</p>
-                <button class="delete-btn" data-id="${sale.id}">Excluir</button>
-            </div>`
-        ).join("");
-
+        // Adiciona evento de exclusão a cada botão
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', async function() {
-                const id = this.getAttribute('data-id');
-                await excluirVenda(id);
+            button.addEventListener("click", function() {
+                const index = parseInt(this.getAttribute("data-index"));
+                const id = this.getAttribute("data-id");
+                excluirVenda(index, id);
             });
         });
     }
 
     // Função para excluir venda
-    async function excluirVenda(id) {
+    function excluirVenda(index, id) {
         if (!confirm("Tem certeza que deseja excluir esta venda?")) {
             return;
         }
 
-        const { error } = await supabase
-            .from("Vendas")
-            .delete()
-            .eq('id', id);
+        const vendaExcluida = salesData[index];
+        
+        // Se tiver ID, excluir do Supabase também
+        if (id) {
+            supabase
+                .from("Vendas")
+                .delete()
+                .eq('id', id)
+                .then(({ error }) => {
+                    if (error) {
+                        console.error("Erro ao excluir venda do Supabase:", error);
+                        alert("Erro ao excluir venda do banco de dados: " + error.message);
+                        return;
+                    }
+                    
+                    console.log("Venda excluída do Supabase com sucesso!");
+                    
+                    // Continuar com exclusão local
+                    finalizarExclusao();
+                })
+                .catch(err => {
+                    console.error("Erro ao excluir venda:", err);
+                    alert("Ocorreu um erro ao excluir a venda. Tente novamente.");
+                });
+        } else {
+            // Se não tiver ID, excluir apenas localmente
+            finalizarExclusao();
+        }
+        
+        function finalizarExclusao() {
+            // Remover do array local
+            salesData.splice(index, 1);
+            
+            // Atualizar localStorage
+            localStorage.setItem("salesData", JSON.stringify(salesData));
+            
+            // Atualizar total
+            totalVendas -= vendaExcluida.value;
+            totalVendasElement.textContent = formatarMoeda(totalVendas);
+            
+            alert("Venda excluída com sucesso!");
+            
+            // Atualizar interface
+            atualizarVendasExclusao();
+            atualizarGraficos(salesData);
+        }
+    }
 
-        if (error) {
-            console.error("Erro ao excluir venda:", error);
-            alert("Erro ao excluir venda: " + error.message);
+    // Função para carregar dados do Supabase
+    async function carregarDados() {
+        console.log("Carregando dados do Supabase...");
+        
+        try {
+            const { data, error } = await supabase
+                .from("Vendas")
+                .select("*")
+                .order('data_venda', { ascending: true });
+            
+            if (error) {
+                console.error("Erro ao carregar dados do Supabase:", error);
+                return;
+            }
+
+            console.log("Dados carregados do Supabase:", data);
+            
+            // Sincronizar dados do Supabase com localStorage
+            if (data && data.length > 0) {
+                // Converter dados do Supabase para o formato do localStorage
+                const supabaseData = data.map(item => ({
+                    model: item.modelo,
+                    value: item.valor,
+                    date: new Date(item.data_venda),
+                    id: item.id
+                }));
+                
+                // Mesclar dados, priorizando os do Supabase
+                salesData = supabaseData;
+                localStorage.setItem("salesData", JSON.stringify(salesData));
+                
+                // Atualizar total
+                totalVendas = salesData.reduce((sum, sale) => sum + sale.value, 0);
+                totalVendasElement.textContent = formatarMoeda(totalVendas);
+            }
+        } catch (err) {
+            console.error("Erro ao carregar dados:", err);
+        }
+    }
+
+    // Função para filtrar vendas
+    function filtrarVendas() {
+        const startDate = startDateInput.value ? new Date(startDateInput.value) : null;
+        const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
+        
+        if ((startDate && isNaN(startDate)) || (endDate && isNaN(endDate))) {
+            alert("Por favor, selecione datas válidas.");
             return;
         }
-
-        alert("Venda excluída com sucesso!");
-        atualizarVendasExclusao();
-        carregarDados();
-    }
-
-    // Função para carregar dados e atualizar gráficos
-  async function carregarDados() {
-    console.log("Carregando dados...");
-    
-    let query = supabase.from("Vendas").select("*");
-    
-    // Capturar valores dos filtros
-    const startDate = startDateInput.value;
-    const endDate = endDateInput.value;
-    
-    console.log("Filtros aplicados:", { startDate, endDate });
-
-    // Aplicar filtros na consulta ao Supabase
-    if (startDate) {
-        // Usar apenas a data sem T e Z para compatibilidade com o formato do banco
-        query = query.gte("data_venda", startDate);
-        console.log("Filtrando a partir de:", startDate);
-    }
-    
-    if (endDate) {
-        // Incluir o dia final completo
-        query = query.lte("data_venda", endDate);
-        console.log("Filtrando até:", endDate);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-        console.error("Erro ao carregar dados:", error);
-        return;
-    }
-
-    console.log("Dados carregados:", data);
-
-    if (data.length === 0) {
-        console.warn("Nenhuma venda encontrada para o período especificado.");
-        // Atualizar total para zero
-        totalVendasElement.textContent = formatarMoeda(0);
-        // Criar gráficos vazios
-        criarGraficos([]);
-        return;
-    }
-
-    // Atualizar total de vendas
-    totalVendasElement.textContent = formatarMoeda(data.reduce((total, venda) => total + venda.valor, 0));
-
-    // Atualizar gráficos com os dados filtrados
-    criarGraficos(data);
-}
-    
-    // Função para criar os gráficos
-    function criarGraficos(vendas) {
-        console.log("Criando gráficos com dados:", vendas);
         
-        // Verificar se os elementos canvas existem
-        const barChartElement = document.getElementById('barChart');
-        const lineChartElement = document.getElementById('lineChart');
+        console.log("Filtrando vendas:", { startDate, endDate });
         
-        if (!barChartElement || !lineChartElement) {
-            console.error("Elementos de gráfico não encontrados no DOM");
+        // Se não houver datas, mostrar todos os dados
+        if (!startDate && !endDate) {
+            atualizarGraficos(salesData);
             return;
         }
         
-        // Destruir gráficos existentes para evitar duplicação
-        if (barChart) {
-            barChart.destroy();
-            barChart = null;
-        }
+        // Filtrar dados
+        const filteredSales = salesData.filter(sale => {
+            const saleDate = new Date(sale.date);
+            
+            if (startDate && endDate) {
+                return saleDate >= startDate && saleDate <= endDate;
+            } else if (startDate) {
+                return saleDate >= startDate;
+            } else if (endDate) {
+                return saleDate <= endDate;
+            }
+            
+            return true;
+        });
         
-        if (lineChart) {
-            lineChart.destroy();
-            lineChart = null;
-        }
+        // Atualizar gráficos com dados filtrados
+        atualizarGraficos(filteredSales);
+    }
+
+    // Função para atualizar gráficos
+    function atualizarGraficos(vendas) {
+        console.log("Atualizando gráficos com dados:", vendas);
         
-        // Preparar dados para os gráficos
-        const vendasPorData = {};
-        
-        // Se não houver vendas, criar gráficos vazios
         if (!vendas || vendas.length === 0) {
-            console.log("Nenhuma venda para exibir");
+            // Limpar gráficos se não houver dados
+            barChart.data.labels = [];
+            barChart.data.datasets[0].data = [];
+            barChart.update();
             
-            // Criar gráficos vazios
-            const barCtx = barChartElement.getContext('2d');
-            barChart = new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Vendas por Data (R$)',
-                        data: [],
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-            
-            const lineCtx = lineChartElement.getContext('2d');
-            lineChart = new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Tendência de Vendas (R$)',
-                        data: [],
-                        fill: false,
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-            
+            lineChart.data.labels = [];
+            lineChart.data.datasets[0].data = [];
+            lineChart.update();
             return;
         }
         
-        // Agrupar vendas por data
-        vendas.forEach(venda => {
-            // Garantir que estamos usando apenas a parte da data (sem T e Z)
-            let data = venda.data_venda;
-            if (data.includes('T')) {
-                data = data.split('T')[0];
-            }
-            
-            if (!vendasPorData[data]) {
-                vendasPorData[data] = 0;
-            }
-            vendasPorData[data] += venda.valor;
-            console.log(`Agrupando venda: ${data} - ${formatarMoeda(venda.valor)}`);
+        // Usar modelo do carro como label e valor como dados
+        const labels = vendas.map(venda => venda.model);
+        const data = vendas.map(venda => venda.value);
+        
+        console.log("Modelos:", labels);
+        console.log("Valores:", data);
+        
+        // Atualizar gráfico de barras
+        barChart.data.labels = labels;
+        barChart.data.datasets[0].data = data;
+        barChart.update();
+        
+        // Calcular crescimento para o gráfico de linha
+        const crescimento = data.map((val, index, arr) => {
+            return index > 0 ? ((val - arr[index - 1]) / arr[index - 1]) * 100 : 0;
         });
         
-        // Ordenar datas
-        const datas = Object.keys(vendasPorData).sort();
-        const valores = datas.map(data => vendasPorData[data]);
+        // Atualizar gráfico de linha
+        lineChart.data.labels = labels;
+        lineChart.data.datasets[0].data = crescimento;
+        lineChart.update();
+    }
+    
+    // Função auxiliar para formatar data para exibição
+    function formatarData(dataString) {
+        if (!dataString) return '';
         
-        // Criar gráfico de barras
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        barChart = new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: datas.map(data => formatarData(data)),
-                datasets: [{
-                    label: 'Vendas por Data (R$)',
-                    data: valores,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return formatarMoeda(value);
-                            }
-                        }
-                    }
-                },
-                tooltips: {
-                    callbacks: {
-                        label: function(tooltipItem, data) {
-                            return formatarMoeda(tooltipItem.value);
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Criar gráfico de linha
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        lineChart = new Chart(lineCtx, {
-            type: 'line',
-            data: {
-                labels: datas.map(data => formatarData(data)),
-                datasets: [{
-                    label: 'Tendência de Vendas (R$)',
-                    data: valores,
-                    fill: false,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return formatarMoeda(value);
-                            }
-                        }
-                    }
-                },
-                tooltips: {
-                    callbacks: {
-                        label: function(tooltipItem, data) {
-                            return formatarMoeda(tooltipItem.value);
-                        }
-                    }
-                }
-            }
-        });
-    }
-    
-    // Função auxiliar para formatar data
- function formatarData(dataString) {
-    if (!dataString) return '';
-    
-    // Verificar se a data já está no formato brasileiro
-    if (dataString.includes('/')) {
-        return dataString;
-    }
-    
-    // Verificar se a data tem o formato ISO com T
-    if (dataString.includes('T')) {
-        dataString = dataString.split('T')[0];
-    }
-    
-    // Converter para o formato brasileiro
-    try {
-        const [ano, mes, dia] = dataString.split('-');
-        if (ano && mes && dia) {
-            return `${dia}/${mes}/${ano}`;
+        // Verificar se a data já está no formato brasileiro
+        if (dataString.includes('/')) {
+            return dataString;
         }
-        return dataString; // Retorna original se não conseguir formatar
-    } catch (e) {
-        console.error("Erro ao formatar data:", e);
-        return dataString;
+        
+        // Verificar se a data tem o formato ISO com T
+        if (dataString.includes('T')) {
+            dataString = dataString.split('T')[0];
+        }
+        
+        // Converter para o formato brasileiro
+        try {
+            const [ano, mes, dia] = dataString.split('-');
+            if (ano && mes && dia) {
+                return `${dia}/${mes}/${ano}`;
+            }
+            return dataString; // Retorna original se não conseguir formatar
+        } catch (e) {
+            console.error("Erro ao formatar data:", e);
+            return dataString;
+        }
     }
-}
 
-// Função para formatar valores em reais
-function formatarMoeda(valor) {
-    if (valor === undefined || valor === null) {
-        return 'R$ 0,00';
+    // Função para formatar valores em reais
+    function formatarMoeda(valor) {
+        if (valor === undefined || valor === null) {
+            return 'R$ 0,00';
+        }
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
 });

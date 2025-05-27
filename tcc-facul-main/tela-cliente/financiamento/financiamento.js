@@ -56,14 +56,15 @@ document.getElementById("calcular").addEventListener("click", function () {
     }
 
     const valorFinanciado = preco - entrada;
-    const taxaJuros = 0.015; // 1.5% ao mês
+    const taxaJuros = 0.0144; // 1,44% ao mês
     const valorParcela = (valorFinanciado * (1 + taxaJuros * parcelas)) / parcelas;
     const totalPagar = valorParcela * parcelas;
     const totalJuros = totalPagar - valorFinanciado;
 
+    // Adicionando o total a financiar
+    atualizarElemento("totalFinanciar", `R$ ${valorFinanciado.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
     atualizarElemento("valorParcela", `R$ ${valorParcela.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
     atualizarElemento("totalPagar", `R$ ${totalPagar.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
     atualizarElemento("totalJuros", `R$ ${totalJuros.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
 });
 });
-

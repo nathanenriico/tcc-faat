@@ -288,6 +288,8 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0 auto;  /* Centraliza, caso a célula seja maior que o card */
+  position: relative; /* Necessário para posicionamento absoluto dos botões */
+  padding-bottom: 60px; /* Espaço para os botões na parte inferior */
 }
 
 .stock-card h2,
@@ -458,7 +460,11 @@ button.whatsapp-btn:hover {
 .button-container {
   display: flex;
   gap: 15px; /* Espaço de 15px entre os botões */
-  margin-top: 15px; /* Espaço acima do container de botões */
+  position: absolute; /* Posicionamento absoluto para fixar na parte inferior */
+  bottom: 10px; /* Distância da parte inferior do card */
+  left: 0;
+  right: 0;
+  justify-content: center; /* Centraliza os botões horizontalmente */
 }
 
 

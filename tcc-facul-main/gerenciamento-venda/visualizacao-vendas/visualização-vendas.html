@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendas Registradas</title>
     <link rel="stylesheet" href="visualizarVendas.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Carregando o Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <header class="navbar">
@@ -24,8 +25,17 @@
             <p>Total acumulado dos anos: <span id="totalVendasAnos">R$ 0,00</span></p>
         </section>
 
+        <section class="sales-filter">
+            <h3>Filtrar Vendas</h3>
+            <div class="filter-controls">
+                <label for="monthFilter">Filtrar por mês:</label>
+                <select id="monthFilter" class="month-filter"></select>
+            </div>
+        </section>
+
         <section class="sales-details">
             <h3>Vendas Detalhadas</h3>
+            <p>Total: <span id="totalVendasDetalhadas">R$ 0,00</span></p>
             <div id="salesContent">
                 <p>Carregando vendas...</p>
             </div>
@@ -36,6 +46,18 @@
         <p>&copy; 2023 - Gestão Financeira</p>
     </footer>
 
+    <!-- Verificação do Supabase -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            if (!window.supabase) {
+                console.error("Supabase não está carregado!");
+                alert("Erro: Biblioteca Supabase não foi carregada corretamente. Verifique sua conexão com a internet.");
+            } else {
+                console.log("Supabase carregado com sucesso!");
+            }
+        });
+    </script>
+    
     <script src="ViewVendas.js"></script>
 </body>
 </html>
