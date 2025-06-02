@@ -236,36 +236,55 @@ function mostrarPopupAlterarSenha() {
   const confirmarCodigoBtn = document.getElementById("confirmarCodigoBtn");
   confirmarCodigoBtn.addEventListener("click", function() {
     const codigoDigitado = document.getElementById("codigoVerificacao").value.trim();
+    const emailDigitado = document.getElementById("emailAlteracao").value.trim();
+    
     if (codigoDigitado === window._codigoVerificacaoOwner) {
       alert("Código verificado com sucesso!");
-      // Exibe os campos para atualização da senha
-      document.getElementById("novaSenhaContainer").style.display = "block";
+      
+      // Salva o email para uso na página de edição de perfil
+      localStorage.setItem("emailRecuperacao", emailDigitado);
+      
+      // Substitui o conteúdo do popup por um botão de redirecionamento
+      popupAlterarSenha.innerHTML = `
+        <h3>Verificação Concluída</h3>
+        <p>Você foi verificado com sucesso!</p>
+        <button id="redirecionarBtn" style="margin-top:10px;">Continuar</button>
+      `;
+      
+      // Adiciona evento ao botão de redirecionamento
+      const redirecionarBtn = document.getElementById("redirecionarBtn");
+      redirecionarBtn.addEventListener("click", function() {
+        // Redireciona para a página de edição de perfil com parâmetro indicando que veio da recuperação de senha
+        window.location.href = "/tcc-facul-main/tela-cadastro/editar-perfil/editar-perfil.html?fromPasswordReset=true"; 
+      });
     } else {
       alert("Código incorreto, por favor, tente novamente.");
     }
   });
 
-  // Lógica para atualizar a senha (simulação)
+  // Lógica para atualizar a senha (simulação) - não será mais necessária com a nova implementação
   const atualizarSenhaBtn = document.getElementById("atualizarSenhaBtn");
-  atualizarSenhaBtn.addEventListener("click", function() {
-    const novaSenha = document.getElementById("novaSenha").value;
-    const confirmarNovaSenha = document.getElementById("confirmarNovaSenha").value;
-    
-    if (novaSenha !== confirmarNovaSenha) {
-      alert("As senhas não conferem! Verifique e tente novamente.");
-      return;
-    }
-    
-    // Aqui você implementaria a lógica real de atualização (por exemplo, via backend)
-    // Em vez de usar alert(), atualizamos o conteúdo do popup com a mensagem de sucesso
-    popupAlterarSenha.innerHTML = `
-      <h3>Senha Atualizada</h3>
-      <p>Sua senha foi atualizada com sucesso!</p>
-    `;
-    
-    // Após 2 segundos, fecha o popup automaticamente
-    setTimeout(fecharPopupAlterarSenha, 2000);
-  });
+  if (atualizarSenhaBtn) {
+    atualizarSenhaBtn.addEventListener("click", function() {
+      const novaSenha = document.getElementById("novaSenha").value;
+      const confirmarNovaSenha = document.getElementById("confirmarNovaSenha").value;
+      
+      if (novaSenha !== confirmarNovaSenha) {
+        alert("As senhas não conferem! Verifique e tente novamente.");
+        return;
+      }
+      
+      // Aqui você implementaria a lógica real de atualização (por exemplo, via backend)
+      // Em vez de usar alert(), atualizamos o conteúdo do popup com a mensagem de sucesso
+      popupAlterarSenha.innerHTML = `
+        <h3>Senha Atualizada</h3>
+        <p>Sua senha foi atualizada com sucesso!</p>
+      `;
+      
+      // Após 2 segundos, fecha o popup automaticamente
+      setTimeout(fecharPopupAlterarSenha, 2000);
+    });
+  }
 
   // Botão de cancelar para fechar o popup
   const cancelarBtn = document.getElementById("cancelarBtn");
@@ -330,4 +349,3 @@ function fecharPopup() {
   }
   window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
 }
-

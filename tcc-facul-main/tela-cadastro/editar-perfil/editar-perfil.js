@@ -92,9 +92,6 @@ async function criarConta() {
   }
 }
 
-// Associa o evento de clique no botão "Criar Conta"
-document.getElementById("criarContaBtn").addEventListener("click", criarConta);
-
 // --------------------------------------------------------------------
 // Código do perfil e atualização (já existente)
 document.addEventListener("DOMContentLoaded", async function () {
@@ -115,70 +112,117 @@ document.addEventListener("DOMContentLoaded", async function () {
     togglePasswordButton.innerHTML = isPasswordVisible ? "🔒" : "🔓";
   });
 
-  // Buscar dados do usuário
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError || !userData || !userData.user) {
-    mostrarPopupAviso("Ocorreu um erro ao carregar seu perfil. Por favor, faça login novamente.");
-    return;
+  // Verificar se o usuário veio da página de recuperação de senha
+  const urlParams = new URLSearchParams(window.location.search);
+  const fromPasswordReset = urlParams.get('fromPasswordReset');
+  
+  if (fromPasswordReset === 'true') {
+    // Se veio da recuperação de senha, usar o email armazenado
+    const emailFromStorage = localStorage.getItem("emailRecuperacao");
+    if (emailFromStorage) {
+      emailField.value = emailFromStorage;
+      // Mostrar mensagem informativa
+      mostrarPopupAviso("Por favor, defina sua nova senha abaixo.");
+    } else {
+      mostrarPopupAviso("Não foi possível recuperar seu email. Por favor, tente novamente.", "/tcc-facul-main/login-tela/login/login.html");
+    }
+  } else {
+    // Fluxo normal - buscar dados do usuário
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData || !userData.user) {
+      mostrarPopupAviso("Ocorreu um erro ao carregar seu perfil. Por favor, faça login novamente.", "/tcc-facul-main/login-tela/login/login.html");
+      return;
+    }
+    emailField.value = userData.user.email;
   }
-
-  emailField.value = userData.user.email;
+  
   passwordField.value = ""; // Nunca exibir a senha
 
-
   function mostrarPopupSenhaIgual() {
-  const popupAviso = document.createElement("div");
-  popupAviso.className = "popup";
-  popupAviso.id = "popupSenhaIgual";
-  popupAviso.innerHTML = `
-    <h3>Aviso!</h3>
-    <p>A nova senha não pode ser igual à anterior.</p>
-    <a href="./editar-perfil.html" class="ok-btn">Clique aqui para redefinir sua senha</a>
-    <button onclick="window.location.href='./editar-perfil.html';">OK</button>
-  `;
-  document.body.appendChild(popupAviso);
-  setTimeout(() => {
-    popupAviso.classList.add("show");
-  }, 10);
-}
-
-// Dentro da função de atualização de perfil:
-profileForm.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const novoEmail = emailField.value.trim();
-  const novaSenha = passwordField.value.trim();
-
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError || !userData || !userData.user) {
-    mostrarPopupAviso("Erro ao carregar perfil. Faça login novamente.");
-    return;
+    const popupAviso = document.createElement("div");
+    popupAviso.className = "popup";
+    popupAviso.id = "popupSenhaIgual";
+    popupAviso.innerHTML = `
+      <h3>Aviso!</h3>
+      <p>A nova senha não pode ser igual à anterior.</p>
+      <a href="./editar-perfil.html" class="ok-btn">Clique aqui para redefinir sua senha</a>
+      <button onclick="window.location.href='./editar-perfil.html';">OK</button>
+    `;
+    document.body.appendChild(popupAviso);
+    setTimeout(() => {
+      popupAviso.classList.add("show");
+    }, 10);
   }
 
-  // Verifica se a senha é igual à anterior
-  const { error: loginError } = await supabase.auth.signInWithPassword({
-    email: userData.user.email,
-    password: novaSenha,
+  // Dentro da função de atualização de perfil:
+  profileForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const novoEmail = emailField.value.trim();
+    const novaSenha = passwordField.value.trim();
+
+    // Verificar se veio da recuperação de senha
+    if (fromPasswordReset === 'true') {
+      // Fluxo de recuperação de senha - não precisa verificar senha anterior
+      if (novaSenha.length < 6) {
+        mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).");
+        return;
+      }
+
+      try {
+        // Tentar fazer login com o email de recuperação e a nova senha
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+          novoEmail,
+          { redirectTo: window.location.origin + "/tcc-facul-main/login-tela/login/login.html" }
+        );
+        
+        if (resetError) {
+          mostrarPopupAviso("Erro ao redefinir senha: " + resetError.message);
+          return;
+        }
+        
+        // Limpar o email de recuperação do localStorage
+        localStorage.removeItem("emailRecuperacao");
+        
+        mostrarPopupAviso("Senha redefinida com sucesso!", "/tcc-facul-main/login-tela/login/login.html");
+      } catch (error) {
+        mostrarPopupAviso("Erro ao processar sua solicitação: " + error.message);
+      }
+      
+      return;
+    }
+
+    // Fluxo normal de atualização de perfil
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData || !userData.user) {
+      mostrarPopupAviso("Erro ao carregar perfil. Faça login novamente.");
+      return;
+    }
+
+    // Verifica se a senha é igual à anterior
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email: userData.user.email,
+      password: novaSenha,
+    });
+
+    if (!loginError) {
+      mostrarPopupSenhaIgual(); // Exibe o popup de aviso caso a senha seja igual
+      return;
+    }
+
+    if (novaSenha.length < 6) {
+      mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).", "./editar-perfil.html");
+      return;
+    }
+
+    const { error: senhaError } = await supabase.auth.updateUser({ password: novaSenha });
+    if (senhaError) {
+      mostrarPopupAviso("Erro ao atualizar a senha: " + senhaError.message);
+      return;
+    }
+
+    mostrarPopupAviso("Perfil atualizado com sucesso!", "/tcc-facul-main/login-tela/login/login.html");
   });
-
-  if (!loginError) {
-    mostrarPopupSenhaIgual(); // Exibe o popup de aviso caso a senha seja igual
-    return;
-  }
-
-  if (novaSenha.length < 6) {
-    mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).", "./editar-perfil.html");
-    return;
-  }
-
-  const { error: senhaError } = await supabase.auth.updateUser({ password: novaSenha });
-  if (senhaError) {
-    mostrarPopupAviso("Erro ao atualizar a senha: " + senhaError.message);
-    return;
-  }
-
-mostrarPopupAviso("Perfil atualizado com sucesso!", "/tcc-facul-main/login-tela/login/login.html");
-});
 });
 
 // --------------------------------------------------------------------
@@ -231,10 +275,10 @@ function mostrarPopupCriarConta() {
     }
   });
 
-document.getElementById("btnCancelarCriarContaPopup").addEventListener("click", function(){
-  fecharPopupCriarConta(); // Remove o popup de criação de conta
-  window.location.href = "../editar-perfil/editar-perfil.html"; // Redireciona para a página de editar perfil (ou outra URL desejada)
-});
+  document.getElementById("btnCancelarCriarContaPopup").addEventListener("click", function(){
+    fecharPopupCriarConta(); // Remove o popup de criação de conta
+    window.location.href = "../editar-perfil/editar-perfil.html"; // Redireciona para a página de editar perfil (ou outra URL desejada)
+  });
 }
 
 function fecharPopupCriarConta() {
@@ -246,4 +290,9 @@ function fecharPopupCriarConta() {
 
 // --------------------------------------------------------------------
 // Evento único para o botão "Criar Conta" (ou "Alterar Conta")
-document.getElementById("criarContaBtn").addEventListener("click", mostrarPopupCriarConta);
+document.addEventListener("DOMContentLoaded", function() {
+  const criarContaBtn = document.getElementById("criarContaBtn");
+  if (criarContaBtn) {
+    criarContaBtn.addEventListener("click", mostrarPopupCriarConta);
+  }
+});

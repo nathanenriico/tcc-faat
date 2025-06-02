@@ -149,7 +149,7 @@ async function carregarCarrosTelaCliente() {
     <button class="whatsapp-btn" aria-label="Contato WhatsApp">
       <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
     </button>
-    <a href="/tcc-faat/tcc-facul-main/tela-cliente/financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
+    <a href="/tcc-facul-main/tela-cliente/financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
       Simular Financiamento
     </a>
   </div>
