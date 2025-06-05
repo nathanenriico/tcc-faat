@@ -1,80 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão Financeira</title>
-    <link rel="stylesheet" href="vendas.css">
-    <script src="vendas.js"></script>
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DASHBOARD Controle de Vendas</title>
+  <link rel="stylesheet" href="vendas.css">
+  <!-- Adicionar Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 </head>
 <body>
-    <header class="navbar">
-        <h1>Gestão Financeira</h1>
-    </header>
-
-    <main class="dashboard">
-        <section class="summary">
-            <h2>Resumo Financeiro</h2>
-            <p>Total vendido: <span id="totalVendas">R$ 0,00</span></p>
-        </section>
-
-        <section class="filters">
-            <label for="startDate">Data Início:</label>
-            <input type="date" id="startDate">
-            <label for="endDate">Data Fim:</label>
-            <input type="date" id="endDate">
-            <button id="filterBtn">Filtrar</button>
-        </section>
-        
-        <section class="charts">
-            <div class="chart-container">
-                <h3>Gráfico de Barras</h3>
-                <canvas id="barChart"></canvas> <!-- Adicione aqui para o Gráfico de Barras -->
-            </div>
-            <div class="chart-container">
-                <h3>Gráfico de Linha</h3>
-                <canvas id="lineChart"></canvas> <!-- Adicione aqui para o Gráfico de Linha -->
-            </div>
-        </section>
-        
-        <button class="register-sale-btn" id="registerSaleBtn">Registrar Venda</button>
-        <button class="view-sales-btn" id="viewSalesBtn">Visualização de Vendas</button>
-        <button class="delete-sale-btn" id="deleteSaleBtn">Excluir Venda</button>
-        
-<!-- Modal de Exclusão -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <span class="close-delete-btn" id="closeDeleteBtn">&times;</span> <!-- Ícone "X" -->
-        <h3>Excluir Venda</h3>
-        <div id="deleteSalesContent">
-            <!-- As vendas registradas serão exibidas aqui -->
-        </div>
-        <!-- Botão Voltar -->
-        <button class="back-btn" id="backBtn">Voltar</button>
+  <div class="dashboard">
+    <!-- Sidebar com ilustração e título -->
+    <div class="sidebar">
+      <!-- Substitua o src pela URL correta caso possua outra imagem -->
+      <img src="" alt="Character Illustration">
+      <h1>DASHBOARD<br>Controle de Vendas</h1>
+      <button id="openSaleFormBtn" class="btn sidebar-btn">Registrar Venda</button>
+      <button id="openDeleteFormBtn" class="btn sidebar-btn delete-btn">Excluir Venda</button>
     </div>
-</div>
-        <!-- Modal de Registro -->
-        <div id="saleModal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h3>Registrar Venda</h3>
-                <form id="saleForm">
-                    <label for="carModel">Modelo do Carro:</label>
-                    <input type="text" id="carModel" required>
-                    <label for="carValue">Valor do Carro:</label>
-                    <input type="number" id="carValue" required>
-                    <button type="submit">Salvar</button>
-                </form>
-            </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content">
+      <!-- Seção de métricas -->
+      <div class="metrics">
+        <div class="metric-card">
+          <h3>Faturamento</h3>
+          <p>R$ 0,00</p>
+          <span>+0%</span>
         </div>
-    </main>
+        <div class="metric-card">
+          <h3>Valor em estoque</h3>
+          <p>R$ 0,00</p>
+        </div>
+      </div>
 
-    <footer class="footer">
-        <p>&copy; 2023 - Gestão Financeira</p>
-    </footer>
+      <!-- Seção com gráficos e tabela -->
+      <div class="content-area">
+        <!-- Área dos gráficos -->
+        <div class="charts">
+          <!-- Gráfico de faturamento ao longo do tempo (barra & linha) -->
+          <div class="chart chart-bar-line">
+            <h2>Faturamento ao longo do tempo</h2>
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+      </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="ViewVendas.js"></script>
+      <!-- Área da tabela detalhada -->
+      <div class="table-section">
+        <h2>Detalhes das Vendas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Modelo</th>
+              <th>Valor</th>
+              <th>Data da Venda</th>
+            </tr>
+          </thead>
+          <tbody id="salesTableBody">
+            <!-- Dados serão inseridos dinamicamente via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Registro de Vendas -->
+  <div id="saleModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Registrar Venda de Carro</h2>
+      <form id="carSaleForm">
+        <div class="form-group">
+          <label for="carModel">Modelo do Carro</label>
+          <input type="text" id="carModel" name="carModel" required>
+        </div>
+        <div class="form-group">
+          <label for="saleValue">Valor da Venda (R$)</label>
+          <input type="number" id="saleValue" name="saleValue" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="saleDate">Data da Venda</label>
+          <input type="date" id="saleDate" name="saleDate" required>
+        </div>
+        <button type="submit" class="btn">Registrar Venda</button>
+      </form>
+      <div id="successMessage" class="success-message">Venda registrada com sucesso!</div>
+      <div id="errorMessage" class="error-message">Erro ao registrar venda. Tente novamente.</div>
+    </div>
+  </div>
+  
+  <!-- Modal de Exclusão de Vendas -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Excluir Venda de Carro</h2>
+      <form id="deleteCarSaleForm">
+        <div class="form-group">
+          <label for="carModelDelete">Selecione o Modelo</label>
+          <select id="carModelDelete" name="carModelDelete" required>
+            <option value="">-- Selecione um modelo --</option>
+          </select>
+        </div>
+        <button type="submit" class="btn delete-btn">Excluir Venda</button>
+      </form>
+      <div id="deleteSuccessMessage" class="success-message">Venda excluída com sucesso!</div>
+      <div id="deleteErrorMessage" class="error-message">Erro ao excluir venda. Tente novamente.</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="vendas.js"></script>
 </body>
 </html>
