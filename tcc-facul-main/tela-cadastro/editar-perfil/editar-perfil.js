@@ -157,9 +157,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Dentro da função de atualização de perfil:
   profileForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    console.log("Formulário de perfil enviado");
 
     const novoEmail = emailField.value.trim();
     const novaSenha = passwordField.value.trim();
+    
+    console.log("Tentando atualizar senha para:", novoEmail);
 
     // Verificar se veio da recuperação de senha
     if (fromPasswordReset === 'true') {
@@ -199,29 +202,34 @@ document.addEventListener("DOMContentLoaded", async function () {
       return;
     }
 
-    // Verifica se a senha é igual à anterior
-    const { error: loginError } = await supabase.auth.signInWithPassword({
-      email: userData.user.email,
-      password: novaSenha,
-    });
-
-    if (!loginError) {
-      mostrarPopupSenhaIgual(); // Exibe o popup de aviso caso a senha seja igual
+    // Verificar se a senha foi fornecida
+    if (!novaSenha) {
+      mostrarPopupAviso("Por favor, insira uma nova senha.");
       return;
     }
 
     if (novaSenha.length < 6) {
-      mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).", "./editar-perfil.html");
+      mostrarPopupAviso("Senha muito curta (mínimo 6 caracteres).");
       return;
     }
 
-    const { error: senhaError } = await supabase.auth.updateUser({ password: novaSenha });
+    console.log("Atualizando senha para o usuário:", userData.user.email);
+    
+    // Atualizar a senha diretamente
+    const { data: updateData, error: senhaError } = await supabase.auth.updateUser({ 
+      password: novaSenha 
+    });
+    
     if (senhaError) {
+      console.error("Erro ao atualizar senha:", senhaError);
       mostrarPopupAviso("Erro ao atualizar a senha: " + senhaError.message);
       return;
     }
+    
+    console.log("Senha atualizada com sucesso:", updateData);
 
-    mostrarPopupAviso("Perfil atualizado com sucesso!", "/tcc-facul-main/login-tela/login/login.html");
+    console.log("Perfil atualizado com sucesso");
+    mostrarPopupAviso("Senha atualizada com sucesso!", "/tcc-facul-main/login-tela/login/login.html");
   });
 });
 

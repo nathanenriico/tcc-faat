@@ -7,8 +7,8 @@ console.log("🔎 O script estoque.js foi carregado!");
 
 // FUNÇÃO PARA VOLTAR À PÁGINA
 window.voltarPagina = function () {
-  console.log("🔙 Voltando para a página anterior...");
-  window.history.back();
+  console.log("🔙 Redirecionando para a página inicial...");
+  window.location.href = "../tela-cadastro/cadastro/cadastro.html";
 };
 
 // FUNÇÃO AUXILIAR: Interpreta o campo de imagens

@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Variável para armazenar o ID da venda a ser excluída
   let saleToDeleteId = null;
+  let selectedSaleForDeletion = null;
 
   // Carregar dados do localStorage
   loadFromLocalStorage();
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.onclick = function() {
       saleModal.style.display = "none";
       deleteModal.style.display = "none";
+      confirmDeleteModal.style.display = "none";
     }
   });
 
@@ -79,20 +81,30 @@ document.addEventListener('DOMContentLoaded', function() {
   async function carregarVendas() {
     try {
       // Tentar fazer login primeiro
-      await supabase.auth.signInWithPassword({
+      const { error: loginError } = await supabase.auth.signInWithPassword({
         email: 'test@example.com',
         password: 'password123'
       });
       
-      // Depois de login, tentar carregar dados
+      if (loginError) {
+        console.error("Erro de login:", loginError);
+        return;
+      }
+      
+      console.log("Login bem-sucedido, carregando dados...");
+      
+      // Depois de login, tentar carregar dados (ignorando registros marcados como excluídos)
       const { data, error } = await supabase
         .from('vendas')
-        .select('*');
+        .select('*')
+        .is('excluido', null);  // Carrega apenas registros não excluídos
       
       if (error) {
         console.log("Erro ao carregar vendas:", error);
         return;
       }
+      
+      console.log("Dados brutos do Supabase:", data);
       
       if (data && data.length > 0) {
         // Mapear dados do Supabase para o formato da UI
@@ -102,6 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
           value: item.valor,
           date: item.data_venda
         }));
+        
+        console.log("Dados mapeados para UI:", carSales);
         
         // Salvar no localStorage como backup
         saveToLocalStorage();
@@ -115,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Registrar venda
-  carSaleForm.onsubmit = function(e) {
+  carSaleForm.onsubmit = async function(e) {
     e.preventDefault();
     
     const carModel = document.getElementById('carModel').value;
@@ -127,37 +141,57 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Criar nova venda com ID local
-    const newSale = {
-      id: Date.now(),
-      model: carModel,
-      value: saleValue,
-      date: saleDate
-    };
-    
-    // Adicionar à lista local
-    carSales.push(newSale);
-    
-    // Salvar no localStorage
-    saveToLocalStorage();
-    
-    // Atualizar interface
-    updateDashboard();
-    
-    // Tentar salvar no Supabase em segundo plano
-    salvarNoSupabase({
-      modelo: carModel,
-      valor: saleValue,
-      data_venda: saleDate
-    });
-    
-    successMessage.style.display = "block";
-    carSaleForm.reset();
-    
-    setTimeout(function() {
-      saleModal.style.display = "none";
-      successMessage.style.display = "none";
-    }, 2000);
+    try {
+      // Salvar no Supabase primeiro
+      const venda = {
+        modelo: carModel,
+        valor: saleValue,
+        data_venda: saleDate
+      };
+      
+      // Login
+      await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'password123'
+      });
+      
+      // Salvar
+      const { data, error } = await supabase
+        .from('vendas')
+        .insert([venda])
+        .select();
+      
+      if (error) {
+        console.error("Erro ao salvar:", error);
+        errorMessage.style.display = "block";
+        return;
+      }
+      
+      console.log("Venda salva com sucesso:", data);
+      
+      // Adicionar à lista local com ID do banco
+      const newSale = {
+        id: data[0].id,
+        model: carModel,
+        value: saleValue,
+        date: saleDate
+      };
+      
+      carSales.push(newSale);
+      saveToLocalStorage();
+      updateDashboard();
+      
+      successMessage.style.display = "block";
+      carSaleForm.reset();
+      
+      setTimeout(function() {
+        saleModal.style.display = "none";
+        successMessage.style.display = "none";
+      }, 2000);
+    } catch (err) {
+      console.error("Erro:", err);
+      errorMessage.style.display = "block";
+    }
   }
 
   // Mostrar confirmação de exclusão
@@ -174,8 +208,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Encontrar o modelo selecionado para mostrar na confirmação
     const selectedSale = carSales.find(sale => sale.id == selectedId);
     if (selectedSale) {
-      // Armazenar o ID para uso posterior
+      // Armazenar o ID e o objeto completo para uso posterior
       saleToDeleteId = selectedId;
+      selectedSaleForDeletion = selectedSale;
+      
+      console.log("Venda selecionada para exclusão:", selectedSale);
       
       // Atualizar o texto de confirmação com o modelo específico
       confirmDeleteText.textContent = `Deseja realmente excluir este modelo: ${selectedSale.model}?`;
@@ -188,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Confirmar exclusão
   confirmDeleteBtn.onclick = async function() {
-    if (!saleToDeleteId) return;
+    if (!saleToDeleteId || !selectedSaleForDeletion) return;
     
     try {
       console.log("Confirmação de exclusão para ID:", saleToDeleteId);
@@ -197,19 +234,54 @@ document.addEventListener('DOMContentLoaded', function() {
       confirmDeleteBtn.textContent = "Processando...";
       confirmDeleteBtn.disabled = true;
       
-      // Tentar excluir do Supabase primeiro
-      await excluirDoSupabase(saleToDeleteId);
+      // Converter ID para número se for string
+      const idToDelete = typeof saleToDeleteId === 'string' ? parseInt(saleToDeleteId) : saleToDeleteId;
+      console.log("ID convertido para exclusão:", idToDelete, "Tipo:", typeof idToDelete);
       
-      // Se chegou aqui, a exclusão no banco foi bem-sucedida
-      console.log("Exclusão no banco bem-sucedida, atualizando interface");
+      // Login com admin
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'password123'
+      });
+      
+      if (loginError) {
+        console.error("Erro de login:", loginError);
+        throw new Error("Falha na autenticação");
+      }
+      
+      console.log("Login bem-sucedido, tentando excluir...");
+      
+      // Tentar excluir diretamente
+      const { error } = await supabase
+        .from('vendas')
+        .delete()
+        .eq('id', idToDelete);
+      
+      if (error) {
+        console.error("Erro ao excluir:", error);
+        
+        // Se falhar, tentar método alternativo
+        console.log("Tentando método alternativo de exclusão...");
+        
+        // Método alternativo: atualizar para um estado "excluído"
+        const { error: updateError } = await supabase
+          .from('vendas')
+          .update({ excluido: true })
+          .eq('id', idToDelete);
+        
+        if (updateError) {
+          console.error("Erro no método alternativo:", updateError);
+          throw new Error("Falha ao excluir");
+        }
+        
+        console.log("Exclusão lógica bem-sucedida");
+      } else {
+        console.log("Exclusão física bem-sucedida");
+      }
       
       // Remover da lista local
       carSales = carSales.filter(sale => sale.id != saleToDeleteId);
-      
-      // Salvar no localStorage
       saveToLocalStorage();
-      
-      // Atualizar interface
       updateDashboard();
       
       // Mostrar mensagem de sucesso
@@ -220,10 +292,11 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteSuccessMessage.style.display = "none";
       }, 2000);
       
-      // Limpar o ID armazenado
+      // Limpar variáveis
       saleToDeleteId = null;
+      selectedSaleForDeletion = null;
     } catch (err) {
-      console.error("Erro ao excluir venda:", err);
+      console.error("Erro ao excluir:", err);
       confirmDeleteModal.style.display = "none";
       deleteErrorMessage.style.display = "block";
       
@@ -234,59 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
       // Restaurar o botão
       confirmDeleteBtn.textContent = "Confirmar";
       confirmDeleteBtn.disabled = false;
-    }
-  }
-
-  // Salvar no Supabase
-  async function salvarNoSupabase(venda) {
-    try {
-      // Tentar fazer login primeiro
-      await supabase.auth.signInWithPassword({
-        email: 'test@example.com',
-        password: 'password123'
-      });
-      
-      // Depois de login, tentar salvar
-      await supabase.from('vendas').insert([venda]);
-    } catch (err) {
-      console.log("Erro ao salvar no Supabase:", err);
-    }
-  }
-
-  // Excluir do Supabase
-  async function excluirDoSupabase(id) {
-    try {
-      console.log("Iniciando exclusão no Supabase para ID:", id);
-      
-      // Tentar fazer login primeiro
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: 'test@example.com',
-        password: 'password123'
-      });
-      
-      if (loginError) {
-        console.error("Erro ao fazer login:", loginError);
-        throw new Error("Falha na autenticação");
-      }
-      
-      console.log("Login bem-sucedido, tentando excluir...");
-      
-      // Depois de login, tentar excluir
-      const { error } = await supabase
-        .from('vendas')
-        .delete()
-        .eq('id', id);
-      
-      if (error) {
-        console.error("Erro ao excluir do Supabase:", error);
-        throw new Error("Falha ao excluir registro");
-      }
-      
-      console.log("Registro excluído com sucesso do Supabase!");
-      return true;
-    } catch (err) {
-      console.error("Erro ao excluir do Supabase:", err);
-      throw err; // Propagar o erro para ser tratado pelo chamador
     }
   }
 
@@ -326,9 +346,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateDashboard() {
     // Métricas
     const totalRevenue = carSales.reduce((total, sale) => total + sale.value, 0);
-    document.querySelector('.metric-card:nth-child(1) p').textContent = `R$ ${totalRevenue.toFixed(2)}`;
-    document.querySelector('.metric-card:nth-child(2) p').textContent = `R$ ${(totalRevenue * 0.3).toFixed(2)}`;
-    document.querySelector('.metric-card:nth-child(1) span').textContent = carSales.length > 1 ? '+15%' : '+0%';
+    document.querySelector('.metric-card p').textContent = `R$ ${totalRevenue.toFixed(2)}`;
+    document.querySelector('.metric-card span').textContent = carSales.length > 1 ? '+15%' : '+0%';
     
     // Tabela
     updateSalesTable();
