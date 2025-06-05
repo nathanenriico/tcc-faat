@@ -249,3 +249,15 @@ body {
 .delete-btn:hover {
   background-color: #c9302c;
 }
+
+/* Estilos para o modal de confirmação */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+#confirmDeleteText {
+  font-size: 16px;
+  margin: 20px 0;
+}

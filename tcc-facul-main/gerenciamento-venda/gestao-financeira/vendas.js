@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const openDeleteFormBtn = document.getElementById('openDeleteFormBtn');
   const saleModal = document.getElementById('saleModal');
   const deleteModal = document.getElementById('deleteModal');
+  const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  const confirmDeleteText = document.getElementById('confirmDeleteText');
   const closeBtns = document.querySelectorAll('.close-modal');
   const carSaleForm = document.getElementById('carSaleForm');
   const deleteCarSaleForm = document.getElementById('deleteCarSaleForm');
@@ -21,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const errorMessage = document.getElementById('errorMessage');
   const deleteSuccessMessage = document.getElementById('deleteSuccessMessage');
   const deleteErrorMessage = document.getElementById('deleteErrorMessage');
+  
+  // Variável para armazenar o ID da venda a ser excluída
+  let saleToDeleteId = null;
 
   // Carregar dados do localStorage
   loadFromLocalStorage();
@@ -58,6 +65,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event.target == deleteModal) {
       deleteModal.style.display = "none";
     }
+    if (event.target == confirmDeleteModal) {
+      confirmDeleteModal.style.display = "none";
+    }
+  }
+  
+  // Botão para cancelar exclusão
+  cancelDeleteBtn.onclick = function() {
+    confirmDeleteModal.style.display = "none";
   }
 
   // Carregar vendas do Supabase
@@ -145,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2000);
   }
 
-  // Excluir venda
+  // Mostrar confirmação de exclusão
   deleteCarSaleForm.onsubmit = function(e) {
     e.preventDefault();
     
@@ -156,24 +171,70 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Remover da lista local
-    carSales = carSales.filter(sale => sale.id != selectedId);
-    
-    // Salvar no localStorage
-    saveToLocalStorage();
-    
-    // Atualizar interface
-    updateDashboard();
-    
-    // Tentar excluir do Supabase em segundo plano
-    excluirDoSupabase(selectedId);
-    
-    deleteSuccessMessage.style.display = "block";
-    
-    setTimeout(function() {
+    // Encontrar o modelo selecionado para mostrar na confirmação
+    const selectedSale = carSales.find(sale => sale.id == selectedId);
+    if (selectedSale) {
+      // Armazenar o ID para uso posterior
+      saleToDeleteId = selectedId;
+      
+      // Atualizar o texto de confirmação com o modelo específico
+      confirmDeleteText.textContent = `Deseja realmente excluir este modelo: ${selectedSale.model}?`;
+      
+      // Esconder o modal de exclusão e mostrar o de confirmação
       deleteModal.style.display = "none";
-      deleteSuccessMessage.style.display = "none";
-    }, 2000);
+      confirmDeleteModal.style.display = "block";
+    }
+  }
+  
+  // Confirmar exclusão
+  confirmDeleteBtn.onclick = async function() {
+    if (!saleToDeleteId) return;
+    
+    try {
+      console.log("Confirmação de exclusão para ID:", saleToDeleteId);
+      
+      // Mostrar que estamos processando
+      confirmDeleteBtn.textContent = "Processando...";
+      confirmDeleteBtn.disabled = true;
+      
+      // Tentar excluir do Supabase primeiro
+      await excluirDoSupabase(saleToDeleteId);
+      
+      // Se chegou aqui, a exclusão no banco foi bem-sucedida
+      console.log("Exclusão no banco bem-sucedida, atualizando interface");
+      
+      // Remover da lista local
+      carSales = carSales.filter(sale => sale.id != saleToDeleteId);
+      
+      // Salvar no localStorage
+      saveToLocalStorage();
+      
+      // Atualizar interface
+      updateDashboard();
+      
+      // Mostrar mensagem de sucesso
+      confirmDeleteModal.style.display = "none";
+      deleteSuccessMessage.style.display = "block";
+      
+      setTimeout(function() {
+        deleteSuccessMessage.style.display = "none";
+      }, 2000);
+      
+      // Limpar o ID armazenado
+      saleToDeleteId = null;
+    } catch (err) {
+      console.error("Erro ao excluir venda:", err);
+      confirmDeleteModal.style.display = "none";
+      deleteErrorMessage.style.display = "block";
+      
+      setTimeout(function() {
+        deleteErrorMessage.style.display = "none";
+      }, 2000);
+    } finally {
+      // Restaurar o botão
+      confirmDeleteBtn.textContent = "Confirmar";
+      confirmDeleteBtn.disabled = false;
+    }
   }
 
   // Salvar no Supabase
@@ -195,16 +256,37 @@ document.addEventListener('DOMContentLoaded', function() {
   // Excluir do Supabase
   async function excluirDoSupabase(id) {
     try {
+      console.log("Iniciando exclusão no Supabase para ID:", id);
+      
       // Tentar fazer login primeiro
-      await supabase.auth.signInWithPassword({
+      const { error: loginError } = await supabase.auth.signInWithPassword({
         email: 'test@example.com',
         password: 'password123'
       });
       
+      if (loginError) {
+        console.error("Erro ao fazer login:", loginError);
+        throw new Error("Falha na autenticação");
+      }
+      
+      console.log("Login bem-sucedido, tentando excluir...");
+      
       // Depois de login, tentar excluir
-      await supabase.from('vendas').delete().eq('id', id);
+      const { error } = await supabase
+        .from('vendas')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.error("Erro ao excluir do Supabase:", error);
+        throw new Error("Falha ao excluir registro");
+      }
+      
+      console.log("Registro excluído com sucesso do Supabase!");
+      return true;
     } catch (err) {
-      console.log("Erro ao excluir do Supabase:", err);
+      console.error("Erro ao excluir do Supabase:", err);
+      throw err; // Propagar o erro para ser tratado pelo chamador
     }
   }
 
