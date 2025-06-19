@@ -5,100 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Encontre o Carro dos Seus Sonhos</title>
   <link rel="stylesheet" href="principal.css">
-  <style>
-.car-image {
-  width: 100%;
-  height: 350px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background-color: white;
-  margin-bottom: 10px;
-  overflow: visible;
-}
-
-.car-image img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
-
-.car-card,
-.stock-card {
-  height: 550px;
-}
-</style>
-
-  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
-
-<!-- Navbar fixa -->
-<nav class="navbar">
-  <div class="navbar-left">
-    <div class="logo">
-      <img src="logo.png" alt="Logo">
-    </div>
-  </div>
-  <div class="navbar-center">
-    <ul class="nav-links">
-      <li><a href="./principal.html">Home</a></li>
-      
-      <li><a href="#">Contato</a></li>
-     
-    </ul>
-  </div>
-  <div class="navbar-right">
-    <a href="/tcc-faat/tcc-facul-main/login-tela/login/login.html" class="login-link" aria-label="Entrar">
-      <div class="login-icon-container">
-        <img src="perfil-de-usuario.png" alt="Login Icon" class="login-icon">
+  <!-- Navbar fixa -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
       </div>
-      <span class="login-text">Entrar</span>
-    </a>
-  </div>
-</nav>
-
+    </div>
+    <div class="navbar-center">
+      <ul class="nav-links">
+        <li><a href="./principal.html">Home</a></li>
+        <li><a href="#carros">Veículos</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </div>
+    <div class="navbar-right">
+      <a href="/tcc-faat/tcc-facul-main/login-tela/login/login.html" class="login-link" aria-label="Entrar">
+        <div class="login-icon-container">
+          <img src="perfil-de-usuario.png" alt="Login Icon" class="login-icon">
+        </div>
+        <span class="login-text">Entrar</span>
+      </a>
+    </div>
+  </nav>
 
   <!-- Header -->
   <header class="header">
     <div class="overlay"></div>
     <div class="header-content">
       <h1>Encontre o carro dos seus sonhos</h1>
-      <p>Encontre carros para venda ou aluguel perto de você</p>
+      <p>Descubra os melhores veículos para venda ou aluguel perto de você</p>
     </div>
   </header>
 
- <!-- Seção de Categorias -->
-<section class="categories" style="display: none;">
-  <h2>Categorias</h2>
-  <div class="categories-container">
-    <!-- Categorias serão geradas dinamicamente -->
-  </div>
-</section>
-
-
   <!-- Lista de Carros -->
   <section class="stock-list" id="carros">
-    <h2>Carros disponíveis</h2>
+    <h2>Veículos disponíveis</h2>
     <div class="carros-container">
-        <!-- Os carros serão carregados dinamicamente aqui -->
+      <!-- Os carros serão carregados dinamicamente aqui -->
     </div>
-</section>
-<!-- Modal para imagem -->
-<div id="imageModal" class="modal">
-  <span class="close">&times;</span>
-  <button class="modal-prev"><</button>
-  <div class="modal-content">
-    <img id="modalImage" src="" alt="Imagem ampliada">
+  </section>
+
+  <!-- Modal para imagem -->
+  <div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <button class="modal-prev">&lt;</button>
+    <div class="modal-content">
+      <img id="modalImage" src="" alt="Imagem ampliada">
+    </div>
+    <button class="modal-next">&gt;</button>
   </div>
-  <button class="modal-next">></button>
-</div>
-
-
   
   <!-- Rodapé -->
   <footer id="contato">
@@ -111,25 +73,21 @@
         <h2>Links Rápidos</h2>
         <ul>
           <li><a href="./principal.html">Home</a></li>
-          <li><a href="../principal/principal.html#carros">Carros</a></li>
-          <li><a href="../principal/principal.html#contato">Contato</a></li>
+          <li><a href="#carros">Veículos</a></li>
+          <li><a href="#contato">Contato</a></li>
         </ul>
       </div>
       <div class="footer-section contact">
         <h2>Contato</h2>
-        <p>Email: <a href="mailto:contato@seusite.com">nicholasqueiroz2517@gmail.com</a></p>
-        <p>Telefone: <a href="tel:+5511999999999">(11) 98516-2224</a></p>
+        <p>Email: <a href="mailto:nicholasqueiroz2517@gmail.com">nicholasqueiroz2517@gmail.com</a></p>
+        <p>Telefone: <a href="tel:+5511985162224">(11) 98516-2224</a></p>
       </div>
     </div>
     <div class="footer-bottom">
       <p>&copy; 2023 Encontre o Carro dos Seus Sonhos. Todos os direitos reservados.</p>
     </div>
   </footer>
+
   <script type="module" src="principal.js"></script>
-  
-
-
-
-
 </body>
 </html>

@@ -1,38 +1,54 @@
 /* Reset e base */
-body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #f5f5f5;
-  padding-top: 70px; /* Compensar a navbar fixa */
-  min-height: 100vh;
-  overflow-x: hidden;
+:root {
+  --primary-color: #3a5998;
+  --secondary-color: #4267B2;
+  --accent-color: #1877F2;
+  --text-color: #333;
+  --light-text: #fff;
+  --dark-bg: #1c1c1c;
+  --light-bg: #f8f9fa;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+  --font-primary: 'Montserrat', 'Arial', sans-serif;
+  --font-secondary: 'Open Sans', 'Arial', sans-serif;
 }
 
-
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  background-color: var(--light-bg);
+  padding-top: 70px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  color: var(--text-color);
+}
 
 /* Navbar fixa */
 .navbar {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Separa o conteúdo em três áreas */
-  background-color: #000;
+  justify-content: space-between;
+  background-color: var(--dark-bg);
   padding: 15px 50px;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 999;
-}
-.delete-btn, .add-btn {
-    flex: 1; /* Para garantir tamanhos iguais */
-    padding: 10px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+.delete-btn, .add-btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transition);
+}
 
 /* Seções da Navbar */
 .navbar-left,
@@ -45,6 +61,11 @@ body {
 /* Logo na esquerda */
 .logo img {
   height: 40px;
+  transition: var(--transition);
+}
+
+.logo img:hover {
+  transform: scale(1.05);
 }
 
 /* Itens de navegação centralizados */
@@ -57,34 +78,58 @@ body {
 }
 
 .nav-links li a {
-  color: #fff;
+  color: var(--light-text);
   text-decoration: none;
   font-size: 16px;
-  transition: color 0.3s;
+  font-weight: 500;
+  transition: var(--transition);
+  position: relative;
+  padding: 5px 0;
+}
+
+.nav-links li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--accent-color);
+  transition: var(--transition);
 }
 
 .nav-links li a:hover {
-  color: #ff6600;
+  color: var(--accent-color);
+}
+
+.nav-links li a:hover::after {
+  width: 100%;
 }
 
 /* Estilo do link de login na direita */
 .login-link {
   display: flex;
   align-items: center;
-  color: #fff;
+  color: var(--light-text);
   text-decoration: none;
+  transition: var(--transition);
+}
+
+.login-link:hover {
+  transform: translateY(-2px);
 }
 
 /* Container do ícone do login */
 .login-icon-container {
   width: 40px;
   height: 40px;
-  background-color: #fff; /* Fundo branco para destacar */
+  background-color: var(--accent-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
+  margin-right: 10px;
+  transition: var(--transition);
 }
 
 /* Ícone do login */
@@ -92,43 +137,26 @@ body {
   width: 20px;
   height: 20px;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 /* Texto do login */
 .login-text {
   font-size: 16px;
-  font-weight: normal;
-  color: #fff;
-}
-
-/* Ícone do login/perfil (lado direito) */
-.login-icon-container {
-  width: 40px; 
-  height: 40px;
-  border-radius: 50%;
-  background-color: #fff; /* Fundo branco para contraste */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-icon-container img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
+  font-weight: 500;
+  color: var(--light-text);
 }
 
 /* Header */
 .header {
-  /* Adiciona um gradiente semi-transparente sobre a imagem para maior contraste */
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('experiencia-do-cliente-loja-de-carros-4 1.png');
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('experiencia-do-cliente-loja-de-carros-4 1.png');
   background-size: cover;
   background-position: center;
-  padding: 150px 20px 80px;
-  color: #fff;
+  padding: 180px 20px 100px;
+  color: var(--light-text);
   position: relative;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--box-shadow);
 }
 
 .header .overlay {
@@ -137,33 +165,42 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* Mantém o overlay, podendo usar um pouco de blur para suavizar a imagem */
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
 }
 
 .header-content {
   position: relative;
   z-index: 2;
   animation: fadeIn 1.5s ease-out;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .header-content h1 {
   font-size: 48px;
   margin: 0 0 20px;
-  /* Adiciona sombra no texto para destacá-lo */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .header-content p {
-  font-size: 20px;
+  font-size: 22px;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  margin-bottom: 30px;
+  font-family: var(--font-secondary);
 }
 
-/* Animação para o conteúdo do header */
-
-
-
+/* Categorias - mantendo compatibilidade */
+.categories {
+  display: none;
+}
 
 .categories h2 {
   margin-bottom: 30px;
@@ -171,32 +208,23 @@ body {
   font-size: 26px;
   font-weight: 600;
   color: #333;
-  font-family: 'Arial', sans-serif;
-  text-transform: lowercase;  /* Todas as letras em minúsculo */
+  font-family: var(--font-primary);
+  text-transform: lowercase;
   letter-spacing: 1px;
 }
 
 .categories h2::first-letter {
-  text-transform: uppercase;  /* Só a primeira letra em maiúsculo */
+  text-transform: uppercase;
 }
 
-
-/* Container das Categorias */
 .categories-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Espaçamento maior para dar mais "respiro" */
+  gap: 20px;
   justify-content: center;
   align-items: stretch;
+  padding: 10px;
 }
-
-/* Cada Card de Categoria */
-
-
-
-
-/* Container exclusivo para a imagem da categoria: ajuste para imagem circular */
-
 
 .category .category-image img {
   width: 100%;
@@ -209,60 +237,68 @@ body {
   transform: scale(1.1);
 }
 
-/* Nome da Categoria em negrito */
 .category p {
   margin: 0;
   font-size: 20px;
-  font-weight: bold;      /* texto em negrito */
+  font-weight: bold;
   color: #444;
   text-transform: capitalize;
 }
 
-.categories {
-  display: none;
-}
-
-/* Cards organizados em fileiras */
+/* Lista de Carros */
 .stock-list {
-  padding: 20px;
-  background-color: #fff;
+  padding: 60px 20px;
+  background-color: var(--light-bg);
   text-align: center;
 }
 
 .stock-list h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
+  margin-bottom: 40px;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-color);
+  position: relative;
+  display: inline-block;
+}
+
+.stock-list h2::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background-color: var(--accent-color);
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .stock-list p {
   text-align: justify;
 }
 
-/* Contêiner dos cards usando CSS Grid - ATUALIZADO PARA FICAR IGUAL AO ESTOQUE */
+/* Contêiner dos cards usando CSS Grid */
 .carros-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  /* Três colunas iguais */
-  gap: 25px;                              /* Espaçamento entre os cards igual ao estoque */
-  padding: 20px;                          /* Espaçamento interno */
-  max-width: 1200px;                      /* Largura máxima do container */
-  margin: 0 auto;                         /* Centraliza o container na página */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Estilo para cada card */
 .car-card,
 .stock-card {
   width: 100%;
-  max-width: 300px;
   background-color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
   padding: 15px;
-  transition: transform 0.3s ease;
+  transition: var(--transition);
   display: flex;
   flex-direction: column;
   height: 500px;
+  overflow: hidden;
 }
 
 .car-card > *,
@@ -270,11 +306,10 @@ body {
   margin-bottom: 10px;
 }
 
-.button-container {
-  margin-top: auto;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+.car-card:hover,
+.stock-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Ajuste do texto */
@@ -293,58 +328,59 @@ body {
   overflow-wrap: break-word;
   white-space: normal;
   text-align: justify;
-}
-
-/* Efeito ao passar o mouse */
-.stock-card:hover,
-.car-card:hover {
-  transform: translateY(-5px);
+  font-family: var(--font-secondary);
 }
 
 .car-image {
   width: 100%;
   height: 300px;
+  border-radius: var(--border-radius);
+  background-color: #f5f5f5;
+  margin-bottom: 15px;
   overflow: hidden;
-  border-radius: 8px;
-  background-color: white;
-  margin-bottom: 10px;
   position: relative;
 }
 
 .car-image img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   padding: 10px;
+  transition: var(--transition);
+}
+
+.car-card:hover .car-image img {
+  transform: scale(1.05);
 }
 
 .car-details {
-  flex-grow: 1; /* Mantém o card balanceado */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .car-details h3 {
-  margin: 10px 0 5px;
-  font-size: 18px;
-  color: #444;
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .car-details p {
-  margin: 2px 0;
-  font-size: 14px;
+  margin: 5px 0;
+  font-size: 15px;
   color: #666;
 }
 
-.categories-container {
+.button-container {
+  margin-top: auto;
   display: flex;
-  flex-wrap: wrap;
   gap: 15px;
-  justify-content: center; /* Centraliza os elementos */
-  padding: 10px;
+  justify-content: center;
+  padding-top: 15px;
 }
 
+/* Carrossel */
 .carousel-container {
   position: relative;
   overflow: hidden;
@@ -357,24 +393,22 @@ body {
   height: auto;
 }
 
-/* Estilo comum para ambos botões */
 /* Botões para navegação do carrossel */
 .carousel-prev,
 .carousel-next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+  background-color: rgba(0, 0, 0, 0.5);
   border: none;
   color: #fff;
-  font-size: 16px;   /* Diminuído para setas menores */
-  padding: 5px;      /* Menor padding para reduzir o tamanho dos botões */
+  font-size: 16px;
+  padding: 5px;
   cursor: pointer;
-  border-radius: 50%;  /* Mantém o formato circular */
+  border-radius: 50%;
   transition: background-color 0.3s ease;
 }
 
-/* Posicionamento dos botões */
 .carousel-prev {
   left: 10px;
 }
@@ -383,14 +417,14 @@ body {
   right: 10px;
 }
 
-/* Efeito hover para os botões */
 .carousel-prev:hover,
 .carousel-next:hover {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
+/* Botão WhatsApp */
 button.whatsapp-btn {
-  background-color: rgba(37, 211, 102, 0.5); /* Verde transparente com 50% de opacidade */
+  background-color: #25D366;
   border: none;
   border-radius: 50%;
   width: 48px;
@@ -399,47 +433,44 @@ button.whatsapp-btn {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
   padding: 0;
-}
-
-button.whatsapp-btn img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 button.whatsapp-btn:hover {
-  background-color: rgba(29, 168, 81, 0.7); /* Fundo em verde um pouco mais escuro e com 70% de opacidade */
+  background-color: #128C7E;
+  transform: scale(1.1);
 }
 
+button.whatsapp-btn img {
+  max-width: 60%;
+  max-height: 60%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
 
-/* CSS para o botão de financiamento */
+/* Botão de financiamento */
 .financiamento-btn {
-  display: inline-block;             /* Trata o link como um bloco inline */
-  padding: 10px 20px;                 /* Espaçamento interno */
-  background: linear-gradient(135deg, #000000, #4a3ebf); /* Fundo com gradiente */
-  color: #fff;                        /* Cor do texto */
-  font-size: 16px;                    /* Tamanho da fonte */
-  font-weight: bold;                  /* Texto em negrito */
-  text-align: center;                 /* Alinha o texto no centro */
-  text-decoration: none;              /* Remove o sublinhado */
-  border: none;                       /* Remove bordas */
-  border-radius: 5px;                 /* Bordas arredondadas */
-  cursor: pointer;                    /* Cursor pointer para indicar interatividade */
-  transition: background 0.3s ease, transform 0.2s ease; /* Transições suaves */
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: var(--light-text);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .financiamento-btn:hover {
-  background: linear-gradient(135deg, #4a3ebf, #5A4FCF); /* Efeito hover invertendo o gradiente */
-  transform: translateY(-2px);                            /* Leve elevação */
-}
-
-
-.button-container {
-  display: flex;
-  gap: 15px; /* Espaço de 15px entre os botões */
-  margin-top: 15px; /* Espaço acima do container de botões */
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Modal para imagem */
@@ -466,20 +497,24 @@ button.whatsapp-btn:hover {
   max-width: 90%;
   max-height: 90vh;
   object-fit: contain;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
 .modal-prev,
 .modal-next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.2);
   color: white;
   border: none;
   font-size: 24px;
   padding: 15px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 50%;
   z-index: 1001;
+  transition: var(--transition);
 }
 
 .modal-prev {
@@ -492,27 +527,29 @@ button.whatsapp-btn:hover {
 
 .modal-prev:hover,
 .modal-next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.4);
 }
-
-
 
 .close {
   position: absolute;
   top: 15px;
   right: 35px;
-  color: #f1f1f1;
+  color: var(--light-text);
   font-size: 40px;
   font-weight: bold;
   cursor: pointer;
+  transition: var(--transition);
 }
 
+.close:hover {
+  color: var(--accent-color);
+}
 
 /* Rodapé */
 footer {
-  background-color: #000;
-  color: #fff;
-  padding: 50px 20px 20px;
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+  padding: 60px 20px 20px;
 }
 
 .footer-content {
@@ -520,7 +557,9 @@ footer {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  max-width: 1200px;
+  margin: 0 auto 30px;
 }
 
 .footer-section {
@@ -529,14 +568,34 @@ footer {
 }
 
 .footer-section h2 {
-  margin-bottom: 15px;
-  font-size: 20px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  position: relative;
+  padding-bottom: 10px;
 }
 
-.footer-section p, .footer-section ul, .footer-section a {
+.footer-section h2::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 2px;
+  background-color: var(--accent-color);
+  bottom: 0;
+  left: 0;
+}
+
+.footer-section p, 
+.footer-section ul, 
+.footer-section a {
   font-size: 16px;
   color: #ccc;
   text-decoration: none;
+  transition: var(--transition);
+  font-family: var(--font-secondary);
+}
+
+.footer-section a:hover {
+  color: var(--accent-color);
 }
 
 .footer-section ul {
@@ -545,148 +604,165 @@ footer {
 }
 
 .footer-section ul li {
-  margin-bottom: 10px;
-}
-
-.footer-section ul li a:hover {
-  color: #ff6600;
+  margin-bottom: 12px;
 }
 
 .footer-bottom {
   text-align: center;
   font-size: 14px;
   color: #aaa;
-  padding-top: 10px;
+  padding-top: 20px;
   border-top: 1px solid #333;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Responsividade específica para telas menores */
-@media (max-width: 768px) {
-  .car-card {
-      width: 90%; /* Adapta a largura para ocupar mais espaço em telas pequenas */
-  }
-
+/* Responsividade */
+@media (max-width: 1024px) {
   .carros-container {
-      gap: 15px; /* Reduz o espaçamento entre os cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
-
-  .stock-list h2 {
-      font-size: 20px; /* Ajusta o tamanho da fonte para títulos em telas menores */
-  }
-  .categories h2 {
-    font-size: 20px; /* Ajusta o tamanho do texto */
-}
-
-.category {
-    width: 150px; /* Reduz a largura dos itens */
-    padding: 10px; /* Ajusta o espaçamento interno */
-}
-
-.category img {
-    width: 40px; /* Imagens menores para telas pequenas */
-    height: 40px;
-}
-
-.categories-container {
-    gap: 10px; /* Reduz o espaçamento entre os itens */
-}
-
-}
-
-@media (max-width: 480px) {
-  .car-card {
-      width: 100%; /* Cards ocupam toda a largura disponível */
-  }
-
-  .stock-list h2 {
-      font-size: 18px; /* Ajusta ainda mais o tamanho da fonte */
-  }
-
-  .car-details p {
-      font-size: 12px; /* Texto menor para telas pequenas */
-  }
-  .categories h2 {
-    font-size: 18px; /* Título ajustado para celulares */
-}
-
-.category {
-    width: 100%; /* Os itens ocupam toda a largura da tela */
-    padding: 8px; /* Espaçamento mais compacto */
-}
-
-.category img {
-    width: 35px; /* Tamanho ainda menor para imagens */
-    height: 35px;
-}
-
-.categories-container {
-    gap: 5px; /* Reduz ainda mais o espaçamento entre os itens */
-}
-.carros-container {
-    grid-template-columns: 1fr;
-  }
-
-}
   
-
-  .carros-container {
-      gap: 15px; /* Reduz o espaçamento entre os cards */
+  .header-content h1 {
+    font-size: 42px;
   }
+}
 
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+  
+  .nav-links {
+    gap: 20px;
+  }
+  
+  .header-content h1 {
+    font-size: 36px;
+  }
+  
+  .header-content p {
+    font-size: 18px;
+  }
+  
   .stock-list h2 {
-      font-size: 20px; /* Ajusta o tamanho da fonte para títulos em telas menores */
+    font-size: 28px;
   }
+  
+  .carros-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  
+  .footer-section {
+    min-width: 180px;
+  }
+  
+  .car-card {
+    width: 90%;
+  }
+  
   .categories h2 {
-    font-size: 20px; /* Ajusta o tamanho do texto */
-}
-
-.category {
-    width: 150px; /* Reduz a largura dos itens */
-    padding: 10px; /* Ajusta o espaçamento interno */
-}
-
-.category img {
-    width: 40px; /* Imagens menores para telas pequenas */
+    font-size: 20px;
+  }
+  
+  .category {
+    width: 150px;
+    padding: 10px;
+  }
+  
+  .category img {
+    width: 40px;
     height: 40px;
+  }
+  
+  .categories-container {
+    gap: 10px;
+  }
 }
 
-.categories-container {
-    gap: 10px; /* Reduz o espaçamento entre os itens */
+@media (max-width: 576px) {
+  .navbar {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .navbar-left, .navbar-center, .navbar-right {
+    margin: 5px 0;
+  }
+  
+  .nav-links {
+    gap: 15px;
+  }
+  
+  .header {
+    padding: 120px 15px 80px;
+  }
+  
+  .header-content h1 {
+    font-size: 28px;
+  }
+  
+  .header-content p {
+    font-size: 16px;
+  }
+  
+  .stock-list {
+    padding: 40px 15px;
+  }
+  
+  .stock-list h2 {
+    font-size: 24px;
+  }
+  
+  .carros-container {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+  
+  .car-card, .stock-card {
+    height: auto;
+    min-height: 450px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .footer-section {
+    width: 100%;
+  }
 }
-
-
 
 @media (max-width: 480px) {
   .car-card {
-      width: 100%; /* Cards ocupam toda a largura disponível */
+    width: 100%;
   }
-
+  
   .stock-list h2 {
-      font-size: 18px; /* Ajusta ainda mais o tamanho da fonte */
+    font-size: 18px;
   }
-
+  
   .car-details p {
-      font-size: 12px; /* Texto menor para telas pequenas */
+    font-size: 12px;
   }
+  
   .categories h2 {
-    font-size: 18px; /* Título ajustado para celulares */
-}
-
-.category {
-    width: 100%; /* Os itens ocupam toda a largura da tela */
-    padding: 8px; /* Espaçamento mais compacto */
-}
-
-.category img {
-    width: 35px; /* Tamanho ainda menor para imagens */
-    height: 35px;
-}
-
-.categories-container {
-    gap: 5px; /* Reduz ainda mais o espaçamento entre os itens */
-}
-.carros-container {
-    grid-template-columns: 1fr;
+    font-size: 18px;
   }
-
+  
+  .category {
+    width: 100%;
+    padding: 8px;
+  }
+  
+  .category img {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .categories-container {
+    gap: 5px;
+  }
 }

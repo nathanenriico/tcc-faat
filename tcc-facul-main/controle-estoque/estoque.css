@@ -173,6 +173,32 @@ header {
     transition: all 0.3s ease;
 }
 
+/* Grupo de botões */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Botão de venda */
+.sold-btn {
+    background: #28a745;
+    color: white;
+    flex: 1;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.sold-btn:hover {
+    background: #218838;
+}
+
 .delete-btn {
     background: #ff3e3e;
     color: white;

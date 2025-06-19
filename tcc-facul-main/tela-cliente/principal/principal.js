@@ -149,7 +149,7 @@ async function carregarCarrosTelaCliente() {
     <button class="whatsapp-btn" aria-label="Contato WhatsApp">
       <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
     </button>
-    <a href="/tcc-facul-main/tela-cliente/financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
+    <a href="../financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">
       Simular Financiamento
     </a>
   </div>
@@ -176,13 +176,7 @@ async function carregarCarrosTelaCliente() {
       });
     }
 
-    // Evento para o botão de Simular Financiamento
-    const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
-    if (financiamentoBtn) {
-      financiamentoBtn.addEventListener("click", function () {
-        window.location.href = '../financiamento/financiamento.html';
-      });
-    }
+    // O link de financiamento agora usa href direto, não precisa de event listener
 
     // Se existir carousel, adiciona os eventos de navegação
     const carouselContainer = stockCard.querySelector(".carousel-container");
@@ -276,7 +270,7 @@ async function filtrarCarrosPorModelo(modelo) {
         <button class="whatsapp-btn" aria-label="Contato WhatsApp">
           <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
         </button>
-        <button class="financiamento-btn">Simular Financiamento</button>
+        <a href="../financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">Simular Financiamento</a>
       </div>
     `;
     carrosContainer.appendChild(stockCard);
@@ -295,18 +289,13 @@ async function filtrarCarrosPorModelo(modelo) {
     if (whatsappBtn) {
       whatsappBtn.addEventListener("click", function () {
         const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} km.`;
-        const numeroWhatsapp = "5511999999999"; // Ajuste conforme necessário
+        const numeroWhatsapp = "5511985162224"; // Ajuste conforme necessário
         const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
         window.open(urlWhatsapp, "_blank");
       });
     }
     
-    const financiamentoBtn = stockCard.querySelector(".financiamento-btn");
-    if (financiamentoBtn) {
-      financiamentoBtn.addEventListener("click", function () {
-        window.location.href = '../financiamento/financiamento.html';
-      });
-    }
+    // O link de financiamento agora usa href direto, não precisa de event listener
 
     const carouselContainer = stockCard.querySelector(".carousel-container");
     if (carouselContainer) {
