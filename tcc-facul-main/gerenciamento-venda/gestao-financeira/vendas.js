@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
     carSales.forEach(sale => {
       const option = document.createElement('option');
       option.value = sale.id;
-      option.textContent = `${sale.model} - R$ ${sale.value.toFixed(2)} (${formatDate(sale.date)})`;
+      option.textContent = `${sale.model} - ${formatCurrency(sale.value)} (${formatDate(sale.date)})`;
       select.appendChild(option);
     });
   }
@@ -342,11 +342,19 @@ document.addEventListener('DOMContentLoaded', function() {
     return date.toLocaleDateString('pt-BR');
   }
 
+  // Formatar valor em reais
+  function formatCurrency(value) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  }
+
   // Atualizar dashboard
   function updateDashboard() {
     // Métricas
     const totalRevenue = carSales.reduce((total, sale) => total + sale.value, 0);
-    document.querySelector('.metric-card p').textContent = `R$ ${totalRevenue.toFixed(2)}`;
+    document.querySelector('.metric-card p').textContent = formatCurrency(totalRevenue);
     document.querySelector('.metric-card span').textContent = carSales.length > 1 ? '+15%' : '+0%';
     
     // Tabela
@@ -354,6 +362,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Gráfico
     updateCharts();
+  }
+
+  // Preencher select de exclusão
+  function populateDeleteSelect() {
+    const select = document.getElementById('carModelDelete');
+    select.innerHTML = '<option value="">-- Selecione um modelo --</option>';
+    
+    carSales.forEach(sale => {
+      const option = document.createElement('option');
+      option.value = sale.id;
+      option.textContent = `${sale.model} - ${formatCurrency(sale.value)} (${formatDate(sale.date)})`;
+      select.appendChild(option);
+    });
   }
 
   // Atualizar tabela
@@ -370,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
       modelCell.textContent = sale.model;
       
       const valueCell = document.createElement('td');
-      valueCell.textContent = `R$ ${sale.value.toFixed(2)}`;
+      valueCell.textContent = formatCurrency(sale.value);
       
       const dateCell = document.createElement('td');
       dateCell.textContent = formatDate(sale.date);
@@ -445,7 +466,10 @@ document.addEventListener('DOMContentLoaded', function() {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return 'R$ ' + value;
+                return new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                }).format(value);
               }
             }
           }
