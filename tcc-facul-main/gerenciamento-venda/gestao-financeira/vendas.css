@@ -429,3 +429,62 @@ body {
 .table-section::-webkit-scrollbar-thumb:hover {
   background: #1e2f5a;
 }
+
+/* Estilos para o modal de histórico */
+.history-modal {
+  max-width: 900px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.history-content {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.month-section {
+  margin-bottom: 30px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  border-left: 4px solid #2A4374;
+}
+
+.month-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2A4374;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.month-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.month-table th,
+.month-table td {
+  border: 1px solid #D1D1D1;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.month-table th {
+  background: #2A4374;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.month-table td {
+  background-color: #FFFFFF;
+}
+
+.month-table tr:hover td {
+  background-color: rgba(209, 209, 209, 0.1);
+}

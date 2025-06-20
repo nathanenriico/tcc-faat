@@ -12,9 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Elementos DOM
   const openSaleFormBtn = document.getElementById('openSaleFormBtn');
   const openDeleteFormBtn = document.getElementById('openDeleteFormBtn');
+  const openHistoryBtn = document.getElementById('openHistoryBtn');
   const saleModal = document.getElementById('saleModal');
   const deleteModal = document.getElementById('deleteModal');
   const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+  const historyModal = document.getElementById('historyModal');
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
   const confirmDeleteText = document.getElementById('confirmDeleteText');
@@ -50,12 +52,19 @@ document.addEventListener('DOMContentLoaded', function() {
     deleteModal.style.display = "block";
   }
 
+  // Abrir modal de histórico
+  openHistoryBtn.onclick = function() {
+    showSalesHistory();
+    historyModal.style.display = "block";
+  }
+
   // Fechar modais com X
   closeBtns.forEach(function(btn) {
     btn.onclick = function() {
       saleModal.style.display = "none";
       deleteModal.style.display = "none";
       confirmDeleteModal.style.display = "none";
+      historyModal.style.display = "none";
     }
   });
 
@@ -69,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (event.target == confirmDeleteModal) {
       confirmDeleteModal.style.display = "none";
+    }
+    if (event.target == historyModal) {
+      historyModal.style.display = "none";
     }
   }
   
@@ -331,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
     carSales.forEach(sale => {
       const option = document.createElement('option');
       option.value = sale.id;
-      option.textContent = `${sale.model} - ${formatCurrency(sale.value)} (${formatDate(sale.date)})`;
+      option.textContent = `${sale.model} - R$ ${sale.value.toFixed(2)} (${formatDate(sale.date)})`;
       select.appendChild(option);
     });
   }
@@ -342,19 +354,11 @@ document.addEventListener('DOMContentLoaded', function() {
     return date.toLocaleDateString('pt-BR');
   }
 
-  // Formatar valor em reais
-  function formatCurrency(value) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  }
-
   // Atualizar dashboard
   function updateDashboard() {
     // Métricas
     const totalRevenue = carSales.reduce((total, sale) => total + sale.value, 0);
-    document.querySelector('.metric-card p').textContent = formatCurrency(totalRevenue);
+    document.querySelector('.metric-card p').textContent = `R$ ${totalRevenue.toFixed(2)}`;
     document.querySelector('.metric-card span').textContent = carSales.length > 1 ? '+15%' : '+0%';
     
     // Tabela
@@ -362,19 +366,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Gráfico
     updateCharts();
-  }
-
-  // Preencher select de exclusão
-  function populateDeleteSelect() {
-    const select = document.getElementById('carModelDelete');
-    select.innerHTML = '<option value="">-- Selecione um modelo --</option>';
-    
-    carSales.forEach(sale => {
-      const option = document.createElement('option');
-      option.value = sale.id;
-      option.textContent = `${sale.model} - ${formatCurrency(sale.value)} (${formatDate(sale.date)})`;
-      select.appendChild(option);
-    });
   }
 
   // Atualizar tabela
@@ -391,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
       modelCell.textContent = sale.model;
       
       const valueCell = document.createElement('td');
-      valueCell.textContent = formatCurrency(sale.value);
+      valueCell.textContent = `R$ ${sale.value.toFixed(2)}`;
       
       const dateCell = document.createElement('td');
       dateCell.textContent = formatDate(sale.date);
@@ -466,15 +457,90 @@ document.addEventListener('DOMContentLoaded', function() {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL'
-                }).format(value);
+                return 'R$ ' + value;
               }
             }
           }
         }
       }
     });
+  }
+
+  // Mostrar histórico de vendas organizado por mês
+  function showSalesHistory() {
+    const historyContent = document.getElementById('historyContent');
+    
+    if (carSales.length === 0) {
+      historyContent.innerHTML = '<p style="text-align: center; color: #2A4374; font-size: 16px; margin: 20px 0;">Nenhuma venda registrada ainda.</p>';
+      return;
+    }
+    
+    const salesByMonth = {};
+    
+    carSales.forEach(sale => {
+      const date = new Date(sale.date);
+      const monthYear = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+      const monthName = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      
+      if (!salesByMonth[monthYear]) {
+        salesByMonth[monthYear] = {
+          name: monthName.charAt(0).toUpperCase() + monthName.slice(1),
+          sales: []
+        };
+      }
+      
+      salesByMonth[monthYear].sales.push(sale);
+    });
+    
+    const sortedMonths = Object.keys(salesByMonth).sort((a, b) => {
+      const [monthA, yearA] = a.split('/').map(Number);
+      const [monthB, yearB] = b.split('/').map(Number);
+      
+      if (yearA !== yearB) return yearB - yearA;
+      return monthB - monthA;
+    });
+    
+    let html = '';
+    
+    sortedMonths.forEach(monthKey => {
+      const monthData = salesByMonth[monthKey];
+      const totalMonth = monthData.sales.reduce((total, sale) => total + sale.value, 0);
+      
+      html += `
+        <div class="month-section">
+          <div class="month-header">
+            ${monthData.name} - Total: R$ ${totalMonth.toFixed(2)}
+          </div>
+          <table class="month-table">
+            <thead>
+              <tr>
+                <th>Modelo</th>
+                <th>Valor</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      const sortedSales = monthData.sales.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      sortedSales.forEach(sale => {
+        html += `
+          <tr>
+            <td>${sale.model}</td>
+            <td>R$ ${sale.value.toFixed(2)}</td>
+            <td>${formatDate(sale.date)}</td>
+          </tr>
+        `;
+      });
+      
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+    });
+    
+    historyContent.innerHTML = html;
   }
 });

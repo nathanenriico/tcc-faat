@@ -6,11 +6,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 console.log("🔎 Supabase conectado:", supabase);
 
-/*  
-  Função auxiliar para extrair imagens.
-  Ela tenta interpretar o conteúdo do campo `imagens` como JSON; 
-  se não conseguir, assume que é uma única URL ou string.
-*/
 function extrairImagens(campoImagens) {
   let imagensArray = [];
   if (campoImagens) {
@@ -20,7 +15,6 @@ function extrairImagens(campoImagens) {
         imagensArray = [imagensArray];
       }
     } catch (e) {
-      // Se não for JSON, usa o próprio valor
       imagensArray = [campoImagens];
     }
   }
@@ -30,67 +24,6 @@ function extrairImagens(campoImagens) {
   return imagensArray;
 }
 
-/* 
-  Carrega as categorias consultando apenas os campos `modelo` e `imagens` 
-  da tabela "carro". Cada categoria (modelo) é exibida somente uma vez.
-*/
-async function carregarCategorias() {
-  console.log("🚀 Buscando categorias no Supabase...");
-  
-  const { data: carrosDisponiveis, error } = await supabase
-    .from('carro')
-    .select('modelo, imagens');
-
-  if (error) {
-    console.error("❌ Erro ao carregar categorias:", error.message);
-    return;
-  }
-
-  console.log("✅ Categorias recebidas:", carrosDisponiveis);
-  const categoriesContainer = document.querySelector(".categories-container");
-
-  if (!categoriesContainer) {
-    console.error("❌ Elemento .categories-container não encontrado!");
-    return;
-  }
-
-  categoriesContainer.innerHTML = ""; 
-
-  if (carrosDisponiveis.length === 0) {
-    categoriesContainer.innerHTML = "<p>Nenhuma categoria disponível.</p>";
-    return;
-  }
-
-  // Extrai os modelos únicos usando Set
-  const modelosUnicos = [...new Set(carrosDisponiveis.map(carro => carro.modelo))];
-
-  modelosUnicos.forEach(modelo => {
-    const categoria = document.createElement("div");
-    categoria.classList.add("category");
-
-    // Encontra o primeiro carro com esse modelo e extrai a sua imagem
-    const carro = carrosDisponiveis.find(carro => carro.modelo === modelo);
-    const imagensArray = extrairImagens(carro.imagens);
-    const imagemCategoria = imagensArray[0];
-    
-    categoria.innerHTML = `
-      <img src="${imagemCategoria}" alt="${modelo}" style="width: 100%; height: 120px; object-fit: cover;">
-      <span>${modelo}</span>
-    `;
-
-    categoria.addEventListener("click", function () {
-      filtrarCarrosPorModelo(modelo);
-    });
-
-    categoriesContainer.appendChild(categoria);
-  });
-}
-
-/* 
-  Carrega todos os carros para a tela principal.
-  Utiliza a função extrairImagens para tratar o campo de imagens e, 
-  se houver mais de uma imagem, exibe um "carousel" simples.
-*/
 async function carregarCarrosTelaCliente() {
   console.log("🚀 Buscando carros no Supabase...");
   
@@ -120,11 +53,9 @@ async function carregarCarrosTelaCliente() {
     const stockCard = document.createElement("div");
     stockCard.classList.add("car-card");
 
-    // Extrai o array de imagens
     const imagensArray = extrairImagens(carro.imagens);
     console.log("🔎 Caminho da imagem do carro:", imagensArray[0]);
 
-    // Se houver mais de uma imagem, exibe como carousel, senão uma imagem simples.
     let carouselHTML = imagensArray.length > 1 ? `
   <div class="carousel-container" data-index="0">
       <img class="carousel-image" src="${imagensArray[0]}" alt="${carro.modelo}">
@@ -156,146 +87,23 @@ async function carregarCarrosTelaCliente() {
 `;
     carrosContainer.appendChild(stockCard);
 
-    // Adicionar evento de clique na imagem para abrir o modal
     const carImage = stockCard.querySelector('.car-image img');
     if (carImage) {
       carImage.style.cursor = 'pointer';
       carImage.addEventListener('click', function() {
-        openModal(this.src, [this.src], 0);
+        open360Modal(imagensArray);
       });
     }
 
-    // Evento para o botão de WhatsApp
     const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
     if (whatsappBtn) {
       whatsappBtn.addEventListener("click", function () {
         const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} km.`;
-        const numeroWhatsapp = "5511985162224"; // Substitua pelo número correto
+        const numeroWhatsapp = "5511985162224";
         const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
         window.open(urlWhatsapp, "_blank");
       });
     }
-
-    // O link de financiamento agora usa href direto, não precisa de event listener
-
-    // Se existir carousel, adiciona os eventos de navegação
-    const carouselContainer = stockCard.querySelector(".carousel-container");
-    if (carouselContainer) {
-      const prevBtn = carouselContainer.querySelector(".carousel-prev");
-      const nextBtn = carouselContainer.querySelector(".carousel-next");
-      const carouselImage = carouselContainer.querySelector(".carousel-image");
-      let currentIndex = Number(carouselContainer.getAttribute("data-index")) || 0;
-      const updateImage = () => {
-        carouselContainer.setAttribute("data-index", currentIndex);
-        carouselImage.src = imagensArray[currentIndex];
-      };
-      prevBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        currentIndex = (currentIndex === 0) ? imagensArray.length - 1 : currentIndex - 1;
-        updateImage();
-      });
-      nextBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        currentIndex = (currentIndex === imagensArray.length - 1) ? 0 : currentIndex + 1;
-        updateImage();
-      });
-      
-      // Adicione este código aqui para o clique na imagem do carrossel
-      if (carouselImage) {
-        carouselImage.style.cursor = 'pointer';
-        carouselImage.addEventListener('click', function() {
-          openModal(this.src, imagensArray, currentIndex);
-        });
-      }
-    }
-  });
-}
-
-/*
-  Filtra os carros com base no modelo selecionado.
-  Executa uma consulta usando .eq('modelo', modelo) e renderiza os cards filtrados.
-*/
-async function filtrarCarrosPorModelo(modelo) {
-  console.log("Filtrando carros para o modelo:", modelo);
-  const { data: carrosFiltrados, error } = await supabase
-    .from('carro')
-    .select('*')
-    .eq('modelo', modelo);
-    
-  if (error) {
-    console.error("❌ Erro ao filtrar carros:", error.message);
-    return;
-  }
-
-  console.log("✅ Carros filtrados:", carrosFiltrados);
-  const carrosContainer = document.querySelector(".carros-container");
-  if (!carrosContainer) {
-    console.error("❌ Elemento .carros-container não encontrado!");
-    return;
-  }
-
-  carrosContainer.innerHTML = "";
-
-  if (carrosFiltrados.length === 0) {
-    carrosContainer.innerHTML = `<p>Nenhum carro disponível para o modelo "${modelo}" no momento.</p>`;
-    return;
-  }
-
-  carrosFiltrados.forEach(carro => {
-    const stockCard = document.createElement("div");
-    stockCard.classList.add("car-card");
-
-    const imagensArray = extrairImagens(carro.imagens);
-    let carouselHTML = imagensArray.length > 1 ? `
-  <div class="carousel-container" data-index="0">
-      <img class="carousel-image" src="${imagensArray[0]}" alt="${carro.modelo}">
-      <button class="carousel-prev">&#9664;</button>
-      <button class="carousel-next">&#9654;</button>
-  </div>
-` : `
-  <div class="car-image">
-      <img src="${imagensArray[0]}" alt="${carro.modelo}">
-  </div>
-`;
-
-    stockCard.innerHTML = `
-      ${carouselHTML}
-      <h3>${carro.fabricante} ${carro.modelo}</h3>
-      <p><strong>Ano:</strong> ${carro.ano}</p>
-      <p><strong>KM:</strong> ${carro.km}</p>
-      <p><strong>Preço:</strong> ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(carro.preco)}</p>
-      <p><strong>Dono(s):</strong> ${carro.quantidade_dono ?? carro.quantidadeDono ?? 0}</p>
-      <p><strong>Descrição:</strong> ${carro.descricao}</p>
-      <div class="button-container">
-        <button class="whatsapp-btn" aria-label="Contato WhatsApp">
-          <img src="./icons8-whatsapp-50.png" alt="WhatsApp Icon">
-        </button>
-        <a href="../financiamento/financiamento.html?fabricante=${encodeURIComponent(carro.fabricante)}&modelo=${encodeURIComponent(carro.modelo)}&ano=${encodeURIComponent(carro.ano)}&preco=${encodeURIComponent(carro.preco)}&km=${encodeURIComponent(carro.km)}" class="financiamento-btn">Simular Financiamento</a>
-      </div>
-    `;
-    carrosContainer.appendChild(stockCard);
-    
-    // Adicionar evento de clique na imagem para abrir o modal
-    const carImage = stockCard.querySelector('.car-image img');
-    if (carImage) {
-      carImage.style.cursor = 'pointer';
-      carImage.addEventListener('click', function() {
-        openModal(this.src, [this.src], 0);
-      });
-    }
-
-    // Eventos dos botões para o carro filtrado
-    const whatsappBtn = stockCard.querySelector(".whatsapp-btn");
-    if (whatsappBtn) {
-      whatsappBtn.addEventListener("click", function () {
-        const mensagem = `Olá, estou interessado no ${carro.fabricante} ${carro.modelo}, ano ${carro.ano}, com ${carro.km} km.`;
-        const numeroWhatsapp = "5511985162224"; // Ajuste conforme necessário
-        const urlWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
-        window.open(urlWhatsapp, "_blank");
-      });
-    }
-    
-    // O link de financiamento agora usa href direto, não precisa de event listener
 
     const carouselContainer = stockCard.querySelector(".carousel-container");
     if (carouselContainer) {
@@ -318,72 +126,87 @@ async function filtrarCarrosPorModelo(modelo) {
         updateImage();
       });
       
-      // Adicione evento de clique na imagem do carrossel
       if (carouselImage) {
         carouselImage.style.cursor = 'pointer';
         carouselImage.addEventListener('click', function() {
-          openModal(this.src, imagensArray, currentIndex);
+          open360Modal(imagensArray);
         });
       }
     }
   });
 }
 
-// Inicializa tudo após o carregamento do DOM
 document.addEventListener("DOMContentLoaded", async function () {
-  await carregarCategorias();
   await carregarCarrosTelaCliente();
 });
 
-// Função para abrir o modal com a imagem ampliada e navegação
-function openModal(imgSrc, allImages = null, currentIndex = 0) {
-  const modal = document.getElementById('imageModal');
-  const modalImg = document.getElementById('modalImage');
-  const closeBtn = document.querySelector('.close');
+function open360Modal(images) {
+  const modal = document.getElementById('modal360');
+  const viewer = document.getElementById('viewer360');
+  const closeBtn = document.querySelector('.close-360');
   
-  if (modal && modalImg) {
-    modal.style.display = "block";
-    modalImg.src = imgSrc;
+  if (!modal || !viewer) return;
+  
+  let currentIndex = 0;
+  let isDragging = false;
+  let startX = 0;
+  
+  viewer.innerHTML = `
+    <div style="width:100%;height:100%;position:relative;background:#000;border-radius:8px;overflow:hidden;cursor:grab;">
+      <img style="width:100%;height:100%;object-fit:cover;transition:transform 0.1s ease;user-select:none;" src="${images[0]}" alt="360° View">
+      <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:white;padding:8px 16px;border-radius:20px;font-size:12px;pointer-events:none;">Arraste para rotacionar 360°</div>
+    </div>
+  `;
+  
+  const image = viewer.querySelector('img');
+  const container = viewer.querySelector('div');
+  
+  const handleStart = (e) => {
+    isDragging = true;
+    startX = e.clientX || e.touches[0].clientX;
+    container.style.cursor = 'grabbing';
+  };
+  
+  const handleMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
     
-    // Configurar evento de fechamento ao clicar no X
-    if (closeBtn) {
-      closeBtn.onclick = function() {
-        modal.style.display = "none";
-      };
+    const currentX = e.clientX || e.touches[0].clientX;
+    const deltaX = currentX - startX;
+    
+    if (Math.abs(deltaX) > 10) {
+      const direction = deltaX > 0 ? 1 : -1;
+      currentIndex = (currentIndex + direction + images.length) % images.length;
+      image.src = images[currentIndex];
+      startX = currentX;
     }
-    
-    // Configurar evento de fechamento ao clicar fora da imagem
-    modal.onclick = function(e) {
-      if (e.target === modal) {
-        modal.style.display = "none";
-      }
-    };
-    
-    // Se temos múltiplas imagens, configuramos a navegação
-    const prevBtn = document.querySelector('.modal-prev');
-    const nextBtn = document.querySelector('.modal-next');
-    
-    if (allImages && allImages.length > 1 && prevBtn && nextBtn) {
-      // Mostrar os botões de navegação
-      prevBtn.style.display = 'block';
-      nextBtn.style.display = 'block';
-      
-      // Configurar os eventos de clique
-      prevBtn.onclick = function(e) {
-        e.stopPropagation();
-        currentIndex = (currentIndex === 0) ? allImages.length - 1 : currentIndex - 1;
-        modalImg.src = allImages[currentIndex];
-      };
-      
-      nextBtn.onclick = function(e) {
-        e.stopPropagation();
-        currentIndex = (currentIndex === allImages.length - 1) ? 0 : currentIndex + 1;
-        modalImg.src = allImages[currentIndex];
-      };
-    } else if (prevBtn && nextBtn) {
-      // Esconder os botões se não houver múltiplas imagens
-      prevBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
+  };
+  
+  const handleEnd = () => {
+    isDragging = false;
+    container.style.cursor = 'grab';
+  };
+  
+  container.addEventListener('mousedown', handleStart);
+  container.addEventListener('touchstart', handleStart);
+  document.addEventListener('mousemove', handleMove);
+  document.addEventListener('touchmove', handleMove);
+  document.addEventListener('mouseup', handleEnd);
+  document.addEventListener('touchend', handleEnd);
+  
+  modal.style.display = 'block';
+  
+  closeBtn.onclick = () => {
+    modal.style.display = 'none';
+    document.removeEventListener('mousemove', handleMove);
+    document.removeEventListener('touchmove', handleMove);
+    document.removeEventListener('mouseup', handleEnd);
+    document.removeEventListener('touchend', handleEnd);
+  };
+  
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      closeBtn.onclick();
     }
-  }
+  };
 }

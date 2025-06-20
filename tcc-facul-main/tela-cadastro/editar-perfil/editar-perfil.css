@@ -141,6 +141,12 @@ body {
     align-items: center;
 }
 
+.email-status {
+    margin-top: 5px;
+    font-size: 14px;
+    min-height: 20px;
+}
+
 .toggle-password {
     position: absolute;
     right: 10px;

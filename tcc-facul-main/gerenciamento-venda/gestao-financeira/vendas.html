@@ -17,6 +17,7 @@
       <h1>DASHBOARD<br>Controle de Vendas</h1>
       <button id="openSaleFormBtn" class="btn sidebar-btn">Registrar Venda</button>
       <button id="openDeleteFormBtn" class="btn sidebar-btn delete-btn">Excluir Venda</button>
+      <button id="openHistoryBtn" class="btn sidebar-btn">HISTÓRICO DE VENDAS</button>
     </div>
 
     <!-- Conteúdo principal -->
@@ -113,6 +114,17 @@
       <div class="button-group">
         <button id="confirmDeleteBtn" class="btn delete-btn">Confirmar</button>
         <button id="cancelDeleteBtn" class="btn">Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Histórico de Vendas -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content history-modal">
+      <span class="close-modal">&times;</span>
+      <h2>HISTÓRICO DE VENDAS</h2>
+      <div id="historyContent" class="history-content">
+        <!-- Conteúdo será inserido dinamicamente -->
       </div>
     </div>
   </div>

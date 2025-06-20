@@ -3,16 +3,135 @@ body {
     font-family: "Poppins", sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding-top: 70px;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1c1c1c;
+    padding: 15px 50px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-left, .navbar-center, .navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 5px 0;
+}
+
+.nav-links li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #1877F2;
+    transition: all 0.3s ease;
+}
+
+.nav-links li a:hover {
+    color: #1877F2;
+}
+
+.nav-links li a:hover::after {
+    width: 100%;
+}
+
+.login-link {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.login-link:hover {
+    transform: translateY(-2px);
+}
+
+.login-icon-container {
+    width: 40px;
+    height: 40px;
+    background-color: #1877F2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.login-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.login-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
 }
 
 header {
-    background-color: #222;
+    background: #1C1C1C;
     color: white;
     text-align: center;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
+    padding: 40px 20px;
+    font-size: 32px;
+    font-weight: 700;
+    margin-top: 0;
+    box-shadow: 0 4px 20px rgba(28, 28, 28, 0.3);
+    position: relative;
+}
+
+header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: #1877F2;
+    border-radius: 2px;
 }
 
 /* 🔹 Botões */
@@ -23,22 +142,25 @@ header {
 }
 
 .btn-voltar {
-    background-color: #5A4FCF;
+    background: linear-gradient(135deg, #1877F2, #3a5998);
     color: white;
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-weight: bold;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3);
 }
 
 .btn-voltar:hover {
-    background-color: #4937b4;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(24, 119, 242, 0.4);
+    background: linear-gradient(135deg, #3a5998, #1877F2);
 }
 
 /* 🔹 Layout do Estoque */
@@ -52,19 +174,32 @@ header {
 
 /* 🔥 Estilização dos Cards */
 .stock-card {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    padding: 20px;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(24, 119, 242, 0.1);
+    padding: 25px;
     margin: 15px;
     width: 360px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
+    border: 1px solid rgba(24, 119, 242, 0.1);
+    overflow: hidden;
+}
+
+.stock-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1877F2, #3a5998);
 }
 
 .stock-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(24, 119, 242, 0.2);
+    border-color: rgba(24, 119, 242, 0.3);
 }
 
 .stock-card p {
