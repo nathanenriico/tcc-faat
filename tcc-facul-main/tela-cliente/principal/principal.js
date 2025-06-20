@@ -147,23 +147,77 @@ function open360Modal(images) {
   
   if (!modal || !viewer) return;
   
-  let currentIndex = 0;
   let isDragging = false;
-  let startX = 0;
+  let startX = 0, startY = 0;
+  let yaw = 0, pitch = 0;
+  let currentImageIndex = 0;
+  let zoom = 1;
   
   viewer.innerHTML = `
-    <div style="width:100%;height:100%;position:relative;background:#000;border-radius:8px;overflow:hidden;cursor:grab;">
-      <img style="width:100%;height:100%;object-fit:cover;transition:transform 0.1s ease;user-select:none;" src="${images[0]}" alt="360° View">
-      <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:white;padding:8px 16px;border-radius:20px;font-size:12px;pointer-events:none;">Arraste para rotacionar 360°</div>
+    <div id="panoramaContainer" style="width:100%;height:100%;position:relative;background:#000;border-radius:8px;overflow:hidden;cursor:grab;">
+      <canvas id="panoramaCanvas" width="800" height="600" style="width:100%;height:100%;"></canvas>
+      <div style="position:absolute;top:20px;left:20px;color:white;background:rgba(0,0,0,0.8);padding:10px 15px;border-radius:20px;font-size:14px;font-weight:bold;">🌐 Street View 360°</div>
+      <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:white;padding:8px 16px;border-radius:20px;font-size:12px;">Arraste para olhar ao redor</div>
+      <button id="prevImage" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.7);color:white;border:none;padding:15px;border-radius:50%;cursor:pointer;font-size:18px;">◀</button>
+      <button id="nextImage" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.7);color:white;border:none;padding:15px;border-radius:50%;cursor:pointer;font-size:18px;">▶</button>
+      <div style="position:absolute;top:20px;right:20px;display:flex;flex-direction:column;gap:10px;">
+        <button id="zoomIn" style="background:rgba(0,0,0,0.7);color:white;border:none;padding:10px;border-radius:50%;cursor:pointer;font-size:16px;">+</button>
+        <button id="zoomOut" style="background:rgba(0,0,0,0.7);color:white;border:none;padding:10px;border-radius:50%;cursor:pointer;font-size:16px;">−</button>
+      </div>
     </div>
   `;
   
-  const image = viewer.querySelector('img');
-  const container = viewer.querySelector('div');
+  const canvas = document.getElementById('panoramaCanvas');
+  const ctx = canvas.getContext('2d');
+  const container = document.getElementById('panoramaContainer');
+  
+  // Carregar imagem atual
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  
+  const renderPanorama = () => {
+    if (!img.complete) return;
+    
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Simular projeção esférica
+    const fov = 90; // Campo de visão
+    const aspectRatio = canvasWidth / canvasHeight;
+    
+    // Calcular dimensões da viewport com zoom
+    const viewWidth = img.width / zoom;
+    const viewHeight = img.height / zoom;
+    
+    // Calcular offset baseado na rotação (movimento livre)
+    const offsetX = ((yaw + 180) / 360) * Math.max(0, img.width - viewWidth);
+    const offsetY = ((pitch + 90) / 180) * Math.max(0, img.height - viewHeight);
+    
+    // Garantir que ficamos dentro dos limites da imagem
+    let srcX = Math.max(0, Math.min(img.width - viewWidth, offsetX));
+    let srcY = Math.max(0, Math.min(img.height - viewHeight, offsetY));
+    
+    // Desenhar a parte visível da imagem
+    ctx.drawImage(
+      img,
+      srcX, srcY,
+      viewWidth, viewHeight,
+      0, 0,
+      canvasWidth, canvasHeight
+    );
+  };
+  
+  const loadImage = () => {
+    img.onload = renderPanorama;
+    img.src = images[currentImageIndex];
+  };
   
   const handleStart = (e) => {
     isDragging = true;
     startX = e.clientX || e.touches[0].clientX;
+    startY = e.clientY || e.touches[0].clientY;
     container.style.cursor = 'grabbing';
   };
   
@@ -172,14 +226,26 @@ function open360Modal(images) {
     e.preventDefault();
     
     const currentX = e.clientX || e.touches[0].clientX;
-    const deltaX = currentX - startX;
+    const currentY = e.clientY || e.touches[0].clientY;
     
-    if (Math.abs(deltaX) > 10) {
-      const direction = deltaX > 0 ? 1 : -1;
-      currentIndex = (currentIndex + direction + images.length) % images.length;
-      image.src = images[currentIndex];
-      startX = currentX;
-    }
+    const deltaX = currentX - startX;
+    const deltaY = currentY - startY;
+    
+    // Atualizar ângulos diretamente
+    yaw += deltaX * 0.5;
+    pitch += deltaY * 0.5;
+    
+    // Limitar pitch
+    pitch = Math.max(-90, Math.min(90, pitch));
+    
+    // Limitar yaw para não sair da imagem
+    yaw = Math.max(-180, Math.min(180, yaw));
+    
+    // Apenas renderizar, não trocar imagem
+    renderPanorama();
+    
+    startX = currentX;
+    startY = currentY;
   };
   
   const handleEnd = () => {
@@ -187,14 +253,71 @@ function open360Modal(images) {
     container.style.cursor = 'grab';
   };
   
+  // Redimensionar canvas
+  const resizeCanvas = () => {
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    renderPanorama();
+  };
+  
+  // Botões de navegação
+  const prevBtn = document.getElementById('prevImage');
+  const nextBtn = document.getElementById('nextImage');
+  const zoomInBtn = document.getElementById('zoomIn');
+  const zoomOutBtn = document.getElementById('zoomOut');
+  
+  prevBtn.onclick = (e) => {
+    e.stopPropagation();
+    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+    yaw = 0; // Reset yaw ao trocar imagem
+    pitch = 0; // Reset pitch ao trocar imagem
+    loadImage();
+  };
+  
+  nextBtn.onclick = (e) => {
+    e.stopPropagation();
+    currentImageIndex = (currentImageIndex + 1) % images.length;
+    yaw = 0; // Reset yaw ao trocar imagem
+    pitch = 0; // Reset pitch ao trocar imagem
+    loadImage();
+  };
+  
+  // Controles de zoom
+  zoomInBtn.onclick = (e) => {
+    e.stopPropagation();
+    zoom = Math.min(zoom * 1.2, 3); // Máximo 3x
+    renderPanorama();
+  };
+  
+  zoomOutBtn.onclick = (e) => {
+    e.stopPropagation();
+    zoom = Math.max(zoom / 1.2, 0.5); // Mínimo 0.5x
+    renderPanorama();
+  };
+  
+  // Zoom com scroll do mouse
+  container.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      zoom = Math.min(zoom * 1.1, 3);
+    } else {
+      zoom = Math.max(zoom / 1.1, 0.5);
+    }
+    renderPanorama();
+  });
+  
   container.addEventListener('mousedown', handleStart);
   container.addEventListener('touchstart', handleStart);
   document.addEventListener('mousemove', handleMove);
   document.addEventListener('touchmove', handleMove);
   document.addEventListener('mouseup', handleEnd);
   document.addEventListener('touchend', handleEnd);
+  window.addEventListener('resize', resizeCanvas);
   
   modal.style.display = 'block';
+  resizeCanvas();
+  loadImage();
   
   closeBtn.onclick = () => {
     modal.style.display = 'none';
@@ -202,6 +325,7 @@ function open360Modal(images) {
     document.removeEventListener('touchmove', handleMove);
     document.removeEventListener('mouseup', handleEnd);
     document.removeEventListener('touchend', handleEnd);
+    window.removeEventListener('resize', resizeCanvas);
   };
   
   modal.onclick = (e) => {
