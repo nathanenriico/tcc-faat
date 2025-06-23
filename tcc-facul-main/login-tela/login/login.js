@@ -101,7 +101,7 @@ if (loginForm) {
 
       mostrarPopupSucesso();
       setTimeout(() => {
-        window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
+        window.location.href = "../../tela-cadastro/cadastro/cadastro.html";
       }, 2000);
     } catch (err) {
       console.error("❌ Erro inesperado:", err.message);
@@ -591,7 +591,7 @@ function fecharPopup() {
   }
   
   // Redirecionar para a página de cadastro
-  window.location.href = "/tcc-facul-main/tela-cadastro/cadastro/cadastro.html";
+  window.location.href = "../../tela-cadastro/cadastro/cadastro.html";
 }
 
 // Inicializa os eventos após o carregamento do DOM
